@@ -1,0 +1,35 @@
+lancamento_id,contrato_id,data_vencimento,data_pagamento,valor,tipo_lancamento,categoria,status_pagamento,observacoes
+4001,3001,2025-01-13,,1161.37,Despesa,Manutenção,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4002,3001,2025-02-12,2025-02-15,497.75,Despesa,Taxa bancária,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4003,3001,2025-03-14,,1175.44,Despesa,Manutenção,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4004,3001,2025-04-13,2025-04-15,1281.98,Despesa,Taxa bancária,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4005,3002,2025-01-16,2025-01-19,2800.0,Receita,Aluguel,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4006,3002,2025-02-15,2025-02-16,11200.0,Receita,Taxa de administração,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4007,3002,2025-03-17,,612.46,Despesa,Manutenção,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4008,3003,2025-01-19,,231047.67,Receita,Sinal de compra,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4009,3003,2025-02-18,2025-02-19,115523.83,Receita,Sinal de compra,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4010,3004,2025-01-22,2025-01-25,648.8,Despesa,Taxa bancária,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4011,3004,2025-02-21,2025-02-23,323.48,Despesa,Taxa bancária,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4012,3005,2025-01-25,2025-01-23,49260.17,Receita,Sinal de compra,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4013,3005,2025-02-24,2025-02-26,3247.12,Despesa,Imposto,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4014,3005,2025-03-26,,98520.33,Receita,Aluguel,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4015,3005,2025-04-25,,24630.08,Receita,Parcela de venda,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4016,3006,2025-01-28,,16000.0,Receita,Sinal de compra,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4017,3006,2025-02-27,,1354.7,Despesa,Taxa bancária,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4018,3006,2025-03-29,,8000.0,Receita,Sinal de compra,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4019,3007,2025-01-31,,2407.82,Despesa,Manutenção,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4020,3007,2025-03-02,2025-03-02,7299.0,Receita,Parcela de venda,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4021,3007,2025-04-01,2025-03-30,29196.0,Receita,Parcela de venda,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4022,3007,2025-05-01,2025-04-29,7299.0,Receita,Aluguel,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4023,3008,2025-02-03,,14400.0,Receita,Parcela de venda,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4024,3008,2025-03-05,,1596.75,Despesa,Taxa bancária,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4025,3008,2025-04-04,,2126.78,Despesa,Taxa bancária,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4026,3009,2025-02-06,,173333.33,Receita,Aluguel,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4027,3009,2025-03-08,,7944.33,Despesa,Manutenção,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4028,3010,2025-02-09,,15012.0,Receita,Aluguel,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4029,3010,2025-03-11,2025-03-13,1010.28,Despesa,Comissão de corretagem,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4030,3011,2025-02-12,,49169.58,Receita,Taxa de administração,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4031,3011,2025-03-14,2025-03-15,15849.61,Despesa,Taxa bancária,Pago,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4032,3011,2025-04-13,,196678.33,Receita,Aluguel,Atrasado,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4033,3012,2025-02-15,,2364.0,Receita,Parcela de venda,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.
+4034,3012,2025-03-17,,293.43,Despesa,Manutenção,Em aberto,Lançamento financeiro gerado para demonstração do painel da Crânios IMOB.

@@ -1,0 +1,13 @@
+cliente_id,nome,telefone,email,documento,tipo_cliente,origem,status,observacoes
+2001,João Batista,+55 79 98632-7487,joão.cliente@exemplo.com,25757758158,Locatário,Indicação,Em negociação,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2002,Mariana Costa,+55 79 99294-9910,mariana.cliente@exemplo.com,83596768374,Investidor,Site,Lead,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2003,Thiago Mota,+55 79 98328-2966,thiago.cliente@exemplo.com,28317777660,Locatário,WhatsApp,Em negociação,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2004,Bianca Rodrigues,+55 79 99366-9999,bianca.cliente@exemplo.com,30739769715,Comprador,WhatsApp,Em negociação,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2005,Felipe Matos,+55 79 98235-1902,felipe.cliente@exemplo.com,84581016127,Locatário,WhatsApp,Cliente ativo,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2006,Camila Pires,+55 79 99152-5517,camila.cliente@exemplo.com,11389428875,Investidor,Site,Lead,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2007,Leonardo Santos,+55 79 98983-8893,leonardo.cliente@exemplo.com,65304262317,Investidor,Site,Cliente ativo,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2008,Isabela Cunha,+55 79 99636-2325,isabela.cliente@exemplo.com,60385593174,Investidor,WhatsApp,Lead,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2009,Daniel Albuquerque,+55 79 99412-8937,daniel.cliente@exemplo.com,49418517521,Locatário,Indicação,Em negociação,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2010,Renata Silveira,+55 79 99688-7216,renata.cliente@exemplo.com,17146400467,Comprador,Indicação,Em negociação,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2011,André Gomes,+55 79 98634-1557,andré.cliente@exemplo.com,59345212735,Comprador,WhatsApp,Cliente ativo,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.
+2012,Caroline Duarte,+55 79 98159-2328,caroline.cliente@exemplo.com,20984940277,Locatário,Instagram,Lead,Cliente cadastrado para demonstração do fluxo da Crânios IMOB.

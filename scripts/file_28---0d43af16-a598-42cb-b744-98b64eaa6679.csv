@@ -1,0 +1,13 @@
+contrato_id,tipo_contrato,imovel_id,cliente_id,proprietario_id,corretor_id,data_inicio,data_fim,valor_mensal,valor_total,forma_pagamento,status_contrato,observacoes
+3001,Locacao,21,2001,1002,502,2025-01-13,2026-01-08,3569.0,42828.0,Pix,Encerrado,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 21.
+3002,Locacao,4,2012,1009,504,2025-01-16,2026-01-11,2800.0,33600.0,Transferência,Encerrado,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 4.
+3003,Venda,1,2001,1003,506,2025-01-19,2025-03-20,0.0,693143.0,Cartão de crédito,Ativo,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 1.
+3004,Locacao,24,2004,1006,501,2025-01-22,2026-01-17,3056.0,36672.0,Pix,Ativo,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 24.
+3005,Venda,9,2010,1005,507,2025-01-25,2025-03-26,0.0,295561.0,Transferência,Encerrado,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 9.
+3006,Locacao,8,2007,1002,505,2025-01-28,2027-01-18,2000.0,48000.0,Cartão de crédito,Encerrado,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 8.
+3007,Locacao,23,2012,1002,501,2025-01-31,2028-01-16,2433.0,87588.0,Cartão de crédito,Em análise,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 23.
+3008,Locacao,5,2002,1007,503,2025-02-03,2027-01-24,3600.0,86400.0,Cartão de crédito,Em análise,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 5.
+3009,Venda,27,2006,1004,506,2025-02-06,2025-04-07,0.0,520000.0,Cartão de crédito,Encerrado,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 27.
+3010,Locacao,18,2010,1003,505,2025-02-09,2028-01-25,2502.0,90072.0,Boleto,Ativo,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 18.
+3011,Venda,3,2005,1009,502,2025-02-12,2025-04-13,0.0,590035.0,Pix,Em análise,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 3.
+3012,Locacao,14,2006,1007,503,2025-02-15,2026-02-10,2364.0,28368.0,Cartão de crédito,Em análise,Contrato fictício gerado para demonstração do fluxo automatizado da Crânios IMOB para o imóvel 14.
