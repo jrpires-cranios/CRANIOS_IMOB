@@ -3,6 +3,7 @@
 # (não usa snap — funciona corretamente em Docker)
 aptPkgs = [
   "chromium-browser",
+  "ffmpeg",             # Gemini-TTS: conversão PCM → OGG_OPUS
   "fonts-liberation",
   "fonts-noto-color-emoji",
   "libasound2",

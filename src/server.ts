@@ -1783,7 +1783,8 @@ app.post('/api/webhooks/uazapi', async (req, res) => {
                 }]);
 
                 // Enviar com espelhamento (áudio→áudio+texto) e efeito digitando
-                await whatsappResponseService.sendWithMirroring(senderPhone, humanized, hadAudio);
+                // Passa o agente ativo para selecionar a voz/persona correta no TTS
+                await whatsappResponseService.sendWithMirroring(senderPhone, humanized, hadAudio, resultado.agente);
 
             } catch (err: any) {
                 console.error('[UazAPI Webhook] Erro no processamento:', err.message);

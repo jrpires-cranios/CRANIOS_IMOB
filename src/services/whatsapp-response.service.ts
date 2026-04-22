@@ -160,15 +160,25 @@ class WhatsAppResponseService {
      * - Cliente enviou áudio → Elena responde com áudio (TTS) + texto
      * - Cliente enviou texto → Elena responde só com texto
      *
-     * Se GOOGLE_TTS_API_KEY não estiver configurado, envia só texto silenciosamente.
+     * Pipeline TTS: Gemini-TTS → Chirp3-HD → Neural2 → degradação silenciosa para texto.
+     *
+     * @param phone           Número do destinatário
+     * @param text            Texto da resposta (humanizado)
+     * @param clientSentAudio true se o cliente enviou áudio (espelhamento ativo)
+     * @param agentKey        Chave do agente para seleção de voz/persona (ex: "elena", "sdr")
      */
-    async sendWithMirroring(phone: string, text: string, clientSentAudio: boolean): Promise<void> {
+    async sendWithMirroring(
+        phone: string,
+        text: string,
+        clientSentAudio: boolean,
+        agentKey?: string | null,
+    ): Promise<void> {
         if (clientSentAudio && ttsService.isConfigured()) {
             try {
-                const audioBuffer = await ttsService.synthesize(text);
+                const audioBuffer = await ttsService.synthesize(text, agentKey);
                 if (audioBuffer) {
                     await whatsappService.sendAudio(phone, audioBuffer);
-                    // Pausa entre o áudio e o texto complementar
+                    // Pausa natural entre áudio e texto complementar
                     await new Promise(r => setTimeout(r, 1500));
                 }
             } catch (e: any) {
@@ -176,7 +186,7 @@ class WhatsAppResponseService {
             }
         }
 
-        // Texto sempre enviado (seja como complemento do áudio ou resposta principal)
+        // Texto sempre enviado (como complemento do áudio ou resposta principal)
         await this.sendSmart(phone, text);
     }
 }
