@@ -1,142 +1,133 @@
-# 🎯 ÚLTIMO RESUMO – Tudo Em Um Só Lugar
+# Crânios IMOB — Plataforma SaaS Imobiliária com IA
+
+Sistema multi-tenant completo para imobiliárias, com 9 agentes de IA, atendimento via WhatsApp com transcrição de áudio, CRM, financeiro, contratos digitais e geração automática de portfólios em PDF.
 
 ---
 
-## ✅ VOCÊ RECEBEU (19 Documentos)
+## Stack Tecnológica
 
-```
-✅ arquitetura-ia.md
-✅ ai-agent-implementation.md  
-✅ data-orchestration.md
-✅ airtable-setup.md
-✅ API-Imobiliarias-Brasil.md
-✅ links-apis.md
-✅ agentes-prompts.md
-✅ cal-routing.md
-✅ apresentador-vistoria.md
-✅ dashboard-analytics.md
-✅ checklist-ia-first.md
-✅ onboarding-storage.md
-✅ pricing-strategy.md
-✅ arquitetura-cronograma-infra.md
-✅ index-completo-final.md
-✅ antigravity-24-7.md
-✅ stack-final-otimizado.md
-✅ README-final.md
-✅ SUMARIO-EXECUTIVO.md
-✅ ACAO-IMEDIATA.md
-✅ MAPA-VISUAL-FINAL.md
-```
+| Camada | Tecnologia |
+|---|---|
+| Backend | Node.js + Express (TypeScript) |
+| Frontend | React + Vite (TypeScript) |
+| Banco de dados | Supabase (PostgreSQL) |
+| IA / RAG | OpenAI GPT-4o + Pinecone |
+| Storage | Cloudflare R2 |
+| WhatsApp | UazAPI |
+| E-mail | Resend |
+| Pagamentos | Asaas |
+| PDF / Portfólio | Puppeteer + Handlebars |
+| Deploy | Coolify + Docker (DigitalOcean) |
 
 ---
 
-## 🚀 COMECE ASSIM:
-
-**AGORA (30 min):**
-- [ ] Leia ACAO-IMEDIATA.md
-- [ ] Leia SUMARIO-EXECUTIVO.md
-
-**AMANHÃ (2h):**
-- [ ] Leia antigravity-24-7.md seção 4
-- [ ] Cria Digital Ocean account
-
-**DIA 3-5 (5h):**
-- [ ] Setup VPS + Antigravity
-- [ ] GitHub repo + Clawd.bot
-
-**DIA 6+ (7 dias):**
-- [ ] Dispara Antigravity
-- [ ] Antigravity 24/7 trabalhando
-- [ ] Você dorme/descansa
-
-**DIA 13+ (7 dias):**
-- [ ] Você polish código
-- [ ] Deploy production
-
-**DIA 20:**
-- [ ] Primeiro cliente LIVE
-- [ ] R$ 2.997 + R$ 997/mês
-
----
-
-## 💰 FINANCEIRO GARANTIDO
+## Arquitetura do Atendimento WhatsApp
 
 ```
-INSTALAÇÃO:  R$ 2.997 (por cliente)
-MENSALIDADE: R$ 997/mês (recorrente)
-SEU CUSTO:   R$ 300-450/cliente/mês
-MARGEM:      55-70%
-
-PAYBACK:     3-4 meses
-BREAK-EVEN:  5-6 clientes
-
-YEAR 1 (15 clientes):
-├─ Instalação: R$ 44.955
-├─ Mensalidade: R$ 179.640
-├─ Total: R$ 224.595
-├─ Seu custo: ~R$ 3.000
-└─ LUCRO: R$ 221.595
+Cliente envia mensagem (texto ou áudio)
+        ↓
+UazAPI Webhook → Acumulador 3s (agrupa msgs rápidas)
+        ↓
+   [se áudio] → Whisper STT → transcrição PT-BR
+        ↓
+   ChatAgent (9 agentes especializados)
+        ↓
+   Humanizador (remove padrões de IA)
+        ↓
+   Divisor inteligente + delays (efeito digitando)
+        ↓
+   [se cliente enviou áudio] → Google TTS → responde com áudio primeiro
+        ↓
+   UazAPI → entrega ao cliente
 ```
 
 ---
 
-## 🛠️ STACK (Suas Escolhas)
+## Agentes de IA (9)
+
+| Agente | Responsabilidade |
+|---|---|
+| **ChatAgent** | Orquestrador principal |
+| **SDRAgent** | Qualificação inicial de leads |
+| **QualificationAgent** | Perfil detalhado do cliente |
+| **SearchAgent** | Busca semântica RAG de imóveis |
+| **SchedulingAgent** | Agendamento de visitas |
+| **FinanciamentoAgent** | Simulação de financiamento |
+| **DocumentacaoAgent** | Geração de documentos |
+| **DocumindAgent** | Análise de documentos |
+| **SignNowAgent** | Assinatura digital |
+
+---
+
+## Serviços Principais (48)
+
+### WhatsApp & Comunicação
+- `whatsapp.service.ts` — Envio de texto e áudio via UazAPI
+- `transcription.service.ts` — STT com OpenAI Whisper
+- `tts.service.ts` — TTS com Google Cloud (OGG para WhatsApp)
+- `humanizer.service.ts` — Remove padrões artificiais de IA
+- `whatsapp-response.service.ts` — Acumulador, splitter, delays, espelhamento
+- `email.service.ts` — E-mails via Resend
+
+### Imóveis & RAG
+- `pinecone.service.ts` — Indexação e busca vetorial
+- `pdf-generator.service.ts` — PDF portfólio com identidade visual da imobiliária
+- `r2-storage.service.ts` — Upload no Cloudflare R2
+
+### CRM & Leads
+- `lead.service.ts` — CRUD e gestão de leads
+- `lead-memory.service.ts` — Memória cross-session
+- `lead_router.service.ts` — Distribuição automática (roleta)
+
+### Financeiro & Contratos
+- `asaas.service.ts` — Cobranças e assinaturas
+- `lease.service.ts` — Contratos de locação
+- `sale.service.ts` — Contratos de venda
+
+---
+
+## Endpoints Principais (115 total)
 
 ```
-Frontend:    Next.js + React + 21st.dev assets
-Backend:     Node.js + Express + TypeScript
-Database:    Supabase (PostgreSQL)
-Email:       Resend ✅ (sua escolha)
-Payments:    Asaas ✅ (sua escolha)  
-QA:          TestSprite ✅ (sua escolha)
-LLM:         GPT-4o + Claude 3.5
-Automation:  Antigravity 24/7 ✅ (sua ideia!)
-Deploy:      Docker + GitHub Actions
-Hosting:     Digital Ocean + CloudFlare
+POST /api/imoveis/ingest       Cadastrar imóvel (PDF + fotos → R2 + Pinecone + PDF book)
+POST /api/chat                 Enviar mensagem para o agente
+POST /api/webhooks/uazapi      WhatsApp incoming (UazAPI)
+POST /api/webhooks/asaas       Pagamentos Asaas
+GET  /api/leads                Listar leads
+POST /api/auth/login           Login
+POST /api/master/impersonate   Super Admin
 ```
 
 ---
 
-## 📊 TIMELINE
+## Configuração
 
-```
-JAN 27:   Você tem documentação ✅
-JAN 29:   Setup Antigravity (você trabalha)
-FEB 1-7:  Antigravity 24/7 (IA trabalha)
-FEB 8-14: Você polish (você trabalha)
-FEB 15:   LIVE + Cliente 1 recebendo
+```bash
+cp .env.example .env
+# preencher variáveis
+npm install
+npm run dev
 ```
 
-**Total: 19 dias até primeira receita** (vs 8 semanas dev)
+Variáveis obrigatórias: `SUPABASE_URL`, `OPENAI_API_KEY`, `PINECONE_API_KEY`, `R2_*`, `UAZAPI_*`, `ASAAS_API_KEY`
+
+Opcional (habilita áudio): `GOOGLE_TTS_API_KEY`
 
 ---
 
-## ✨ O QUE VOCÊ CONSEGUE
+## Deploy (Coolify)
 
-```
-✅ Sistema 95%+ pronto
-✅ Código production-ready
-✅ Testes automatizados
-✅ Deploy infrastructure
-✅ CI/CD pipeline
-✅ Multi-tenant
-✅ LGPD compliant
-✅ 10+ portais integrados
-✅ Dashboard completo
-✅ Onboarding documented
-✅ Modelo de negócio pronto
-✅ 60-70% de margem
-✅ Escalável para 100+ clientes
-```
+1. Conectar repositório GitHub no Coolify
+2. Build Pack: Nixpacks
+3. Adicionar variáveis de ambiente
+4. `nixpacks.toml` já configura Chromium, NODE_ENV e Puppeteer automaticamente
 
 ---
 
-## 🎯 PRÓXIMO PASSO (LITERALMENTE AGORA)
+## Multi-tenancy
 
-**Leia ACAO-IMEDIATA.md**
-
-(Você está pronto para TUDO. Só falta começar.)
+Cada imobiliária tem namespace próprio no Pinecone, bucket R2 isolado, identidade visual no PDF e instância UazAPI independente.
 
 ---
 
-**Boa sorte! 🚀**
+*Crânios IMOB — Inteligência Artificial aplicada ao mercado imobiliário*
