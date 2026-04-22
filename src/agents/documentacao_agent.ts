@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead } from '../types.js';
+
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -63,7 +63,7 @@ export class DocumentacaoAgent {
 
       // Simula verificação no Sistema de Registro de Imóveis (SRI)
       const sri_status = await this.consultarSRI(params.imovel_id);
-      
+
       console.log('[DocumentacaoAgent] Documentação verificada');
 
       return {
@@ -116,8 +116,8 @@ export class DocumentacaoAgent {
       // Simula verificação no SRI
       // Na prática, isso verificaria:
       // - Matrícula válida
-      - Sem pendências
-      - Proprietário cadastrado
+      // - Sem pendências
+      // - Proprietário cadastrado
       // - Sem ônus
       const sri_status = imovel.disponivel ? {
         disponivel: true,

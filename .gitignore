@@ -1,0 +1,42 @@
+# ─── SEGURANÇA — NUNCA subir ───────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+google-credentials*.json
+
+# ─── Dependências ──────────────────────────────────────────────
+node_modules/
+.venv/
+__pycache__/
+
+# ─── Build / compilação ────────────────────────────────────────
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# ─── Uploads e arquivos temporários ───────────────────────────
+uploads/
+tmp/
+temp/
+*.tmp
+*.log
+logs/
+
+# ─── Testes ────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── IDEs e sistema ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+.idea/
+
+# ─── Puppeteer cache ───────────────────────────────────────────
+.cache/puppeteer/

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead } from '../types.js';
+
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',

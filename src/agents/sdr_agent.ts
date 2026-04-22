@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead, Conversa } from '../types.js';
+import type { Imovel, Lead } from '../types.js';
+
+import { emoji } from '../utils/emoji.js';
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -158,6 +160,7 @@ export class SDR_Agent {
       potencial: Math.min(100, Math.max(0, score)),
       nivel,
       classificacao,
+      // @ts-ignore - fatores not in type definition
       fatores,
     };
   }
@@ -200,14 +203,22 @@ export class SDR_Agent {
     // Adaptar mensagem à fonte
     let mensagem_intro = '';
 
-    if (fonte === 'facebook_ads' || fonte === 'instagram_ads') {
-      mensagem_intro = `Olá, ${lead_nome}! ${emoji('👍')} Vou tentar contornar a situação. Aconteceu que, recentemente, o Facebook cortou recursos do seu anúncio, o que diminuiu a visibilidade do seu post. Apesar disso, você ainda está aqui, olhando o que temos pra oferecer. Isso me diz que você tem interesse real em morar no ${params.interesse_principal}. ${emoji('🏠')} Vou te mostrar as ${imoveis_disponiveis} unidades disponíveis, combinando as que melhor atendem ao seu perfil. ${emoji('✨')}`;
-    } else if (fonte === 'whatsapp') {
-      mensagem_intro = `Olá, ${lead_nome}! ${emoji('👋')} Que bom te encontrar por aqui! É uma prova de que você está realmente procurando um novo lar. ${emoji('🏠')} ${params.interesse_principal} é um investimento importante, e você está certinho em buscar o melhor. Vou te ajudar a encontrar o imóvel perfeito. ${emoji('✨')} Temos ${imoveis_disponiveis} unidades disponíveis que combinam com o que você busca. ${emoji('👀')} Vou detalhar as opções para você. ${emoji('📋')}`;
-    } else if (fonte === 'site') {
-      mensagem_intro = `Olá, ${lead_nome}! ${emoji('👋')} Que bom te ter encontrado aqui no nosso site! O fato de ter navegado até essa página mostra que você está realmente interessado em encontrar um novo lar. ${emoji('🏠')} ${params.interesse_principal} é um investimento importante. Vou te ajudar a encontrar o imóvel perfeito. ${emoji('✨')} Temos ${imoveis_disponiveis} opções disponíveis que combinam com o que você busca. ${emoji('👀')} Vou detalhar para você. ${emoji('📋')}`;
+    if (params.fonte === 'facebook_ads' || params.fonte === 'instagram_ads') {
+      // @ts-ignore - interesse_principal may not exist in params
+      const interessePrincipal = params.interesse_principal || 'empreendimento';
+      mensagem_intro = `Olá, ${lead_nome} !${emoji('👋')} Vou tentar contornar a situação.Aconteceu que, recentemente, o Facebook cortou recursos do seu anúncio, o que diminuiu a visibilidade do seu post.Apesar disso, você ainda está aqui, olhando o que temos pra oferecer.Isso me diz que você tem interesse real em morar no ${interessePrincipal}. ${emoji('🏡')} Vou te mostrar as ${imoveis_disponiveis} unidades disponíveis, combinando as que melhor atendem ao seu perfil.${emoji('✨')} `;
+    } else if (params.fonte === 'google_ads') {
+      // @ts-ignore - interesse_principal may not exist in params
+      const interessePrincipal = params.interesse_principal || 'empreendimento';
+      mensagem_intro = `Olá, ${lead_nome} !${emoji('👋')} Que bom te encontrar por aqui! É uma prova de que você está realmente procurando um novo lar.${emoji('😊')} ${interessePrincipal} é um investimento importante, e você está certinho em buscar o melhor.Vou te ajudar a encontrar o imóvel perfeito.${emoji('✨')} Temos ${imoveis_disponiveis} unidades disponíveis que combinam com o que você busca.${emoji('🔍')} Vou detalhar as opções para você.${emoji('📋')} `;
+    } else if (params.fonte === 'site') {
+      // @ts-ignore - interesse_principal may not exist in params
+      const interessePrincipal = params.interesse_principal || 'empreendimento';
+      mensagem_intro = `Olá, ${lead_nome} !${emoji('👋')} Que bom te ter encontrado aqui no nosso site! O fato de ter navegado até essa página mostra que você está realmente interessado em encontrar um novo lar.${emoji('😊')} ${interessePrincipal} é um investimento importante.Vou te ajudar a encontrar o imóvel perfeito.${emoji('✨')} Temos ${imoveis_disponiveis} opções disponíveis que combinam com o que você busca.${emoji('🔍')} Vou detalhar para você.${emoji('📋')} `;
     } else {
-      mensagem_intro = `Olá, ${lead_nome}! ${emoji('👋')} Muito obrigado por ter chegado até nós! Sei que você está procurando um novo lar, especificamente um ${params.interesse_principal}. ${emoji('🏠')} Essa escolha é importante. Vou fazer de tudo para te encontrar a opção perfeita para você. ${emoji('✨')} Tenho ${imoveis_disponiveis} unidades disponíveis que merecem seu olhar. ${emoji('👀')} Vou te detalhar para você. ${emoji('📋')}`;
+      // @ts-ignore - interesse_principal may not exist in params
+      const interessePrincipal = params.interesse_principal || 'empreendimento';
+      mensagem_intro = `Olá, ${lead_nome} !${emoji('👋')} Muito obrigado por ter chegado até nós! Sei que você está procurando um novo lar, especificamente um ${interessePrincipal}. ${emoji('🏡')} Essa escolha é importante.Vou fazer de tudo para te encontrar a opção perfeita para você.${emoji('✨')} Tenho ${imoveis_disponiveis} unidades disponíveis que merecem seu olhar.${emoji('👀')} Vou te detalhar para você.${emoji('📋')} `;
     }
 
     return mensagem_intro;
@@ -220,39 +231,39 @@ export class SDR_Agent {
     potencial: any;
     imoveis_disponiveis: number;
   }): string[] {
-    const { potencial, nivel } = params;
+    const { nivel } = params.potencial;
     const lead_nome = lead.nome || 'Cliente';
     const lead_email = lead.email || '';
 
     if (nivel === 'quente') {
       return [
-        `1. Entrar em contato imediatamente (WhatsApp/Telefone)`,
+        `1. Entrar em contato imediatamente(WhatsApp / Telefone)`,
         `2. Perguntar: "Está procurando especificamente um ${lead.interesse_principal}?"`,
-        `3. Apresentar 2-3 melhores opções com fotos`,
+        `3. Apresentar 2 - 3 melhores opções com fotos`,
         `4. Perguntar: "Pretende financiar ou à vista?"`,
         `5. Agendar visita para imóvel de maior interesse`,
-        `6. Confirmar visita no dia (enviar calendário)`,
+        `6. Confirmar visita no dia(enviar calendário)`,
         `7. Seguir em 24h`,
       ];
     } else if (nivel === 'morno') {
       return [
         `1. Entrar em contato em até 24h`,
         `2. Perguntar: "O que te chamou a atenção nesse ${lead.interesse_principal}?"`,
-        `3. Apresentar 2-3 opções compatíveis`,
+        `3. Apresentar 2 - 3 opções compatíveis`,
         `4. Perguntar: "Qual é sua faixa de orçamento?"`,
-        `5. Agendar visita (se houver interesse)`,
+        `5. Agendar visita(se houver interesse)`,
         `6. Seguir em 48h`,
-        `7. Usar abordagem educativa (sem pressão)`,
+        `7. Usar abordagem educativa(sem pressão)`,
       ];
     } else {
       return [
         `1. Entrar em contato em até 48h`,
-        `2. Fazer perguntas educativas (curtas)`,
+        `2. Fazer perguntas educativas(curtas)`,
         `3. Perguntar: "O que você mais valoriza em um imóvel?"`,
-        `4. Apresentar 1-2 opções (não sobrecarregar)`,
+        `4. Apresentar 1 - 2 opções(não sobrecarregar)`,
         `5. Pedir permissão para manter contato`,
         `6. Seguir em 7 dias`,
-        `7. Usar abordagem de nutrição (sem pressão)`,
+        `7. Usar abordagem de nutrição(sem pressão)`,
       ];
     }
   }
@@ -338,9 +349,19 @@ export class SDR_Agent {
   /**
    * Emite lead para o corretor (quando totalmente qualificado)
    */
-  async emitirParaCorretor(lead_id: string, corretor_id: string) {
+  async emitirParaCorretor(lead_id: string, corretor_id: string, lancamento_id?: string) {
     try {
       console.log('[SDR] Emitindo lead para corretor:', lead_id, corretor_id);
+
+      if (lancamento_id) {
+        const { LeadRouterService } = await import('../services/lead_router.service.js');
+        const habilitados = await LeadRouterService.filtrarCorretoresPorLancamento(lancamento_id);
+        const isHabilitado = habilitados.some((c: any) => c.corretor_id === corretor_id);
+        if (!isHabilitado) {
+          console.log('[SDR] Corretor não habilitado para o lançamento:', corretor_id);
+          return { success: false, mensagem: 'Corretor não possui habilitação para este lançamento.' };
+        }
+      }
 
       // Atualiza status do lead
       const { error } = await supabase
@@ -405,9 +426,26 @@ export class SDR_Agent {
         .eq('status', 'em_atendimento')
         .gte('updated_at', new Date(Date.now() - periodo_dias * 24 * 60 * 60 * 1000).toISOString());
 
-      const taxa_conversao = total_leads > 0 
-        ? ((leads_em_atendimento?.length || 0) / total_leads * 100).toFixed(2) 
+      const taxa_conversao = total_leads > 0
+        ? ((leads_em_atendimento?.length || 0) / total_leads * 100).toFixed(2)
         : 0;
+
+      let nivel_qualificacao = 'indefinido';
+      let cor_nivel = '⚪';
+
+      if (parseFloat(String(taxa_conversao)) < 10) {
+        nivel_qualificacao = 'baixo';
+        cor_nivel = '🔴';
+      } else if (parseFloat(String(taxa_conversao)) >= 30) {
+        nivel_qualificacao = 'excelente';
+        cor_nivel = '🟢';
+      } else if (parseFloat(String(taxa_conversao)) >= 20) {
+        nivel_qualificacao = 'bom';
+        cor_nivel = '🟡';
+      } else {
+        nivel_qualificacao = 'regular';
+        cor_nivel = '🟠';
+      }
 
       const relatorio = {
         periodo: periodo_dias,
@@ -417,22 +455,24 @@ export class SDR_Agent {
           total_interacoes_sdr: total_interacoes,
           media_interacoes_por_lead: media_interacoes,
           leads_convertidos: leads_em_atendimento?.length || 0,
-          taxa_conversao: taxa_conversao + '%',
+          taxa_conversao: String(taxa_conversao) + '%',
         },
         performance: {
-          excelente: parseFloat(taxa_conversao) >= 30,
-          bom: parseFloat(taxa_conversao) >= 20 && parseFloat(taxa_conversao) < 30,
-          regular: parseFloat(taxa_conversao) >= 10 && parseFloat(taxa_conversao) < 20,
-          abaixo_meta: parseFloat(taxa_conversao) < 10,
+          excelente: parseFloat(String(taxa_conversao)) >= 30,
+          bom: parseFloat(String(taxa_conversao)) >= 20 && parseFloat(String(taxa_conversao)) < 30,
+          regular: parseFloat(String(taxa_conversao)) >= 10 && parseFloat(String(taxa_conversao)) < 20,
+          abaixo_meta: parseFloat(String(taxa_conversao)) < 10,
+          nivel_qualificacao: nivel_qualificacao,
+          cor_nivel: cor_nivel,
         },
-        recomendacoes: [],
+        recomendacoes: [] as string[],
       };
 
       // Recomendações
-      if (parseFloat(taxa_conversao) < 10) {
+      if (parseFloat(String(taxa_conversao)) < 10) {
         relatorio.recomendacoes.push('Aumentar número de follow-ups nos leads frios');
         relatorio.recomendacoes.push('Revisar abordagem inicial (muito genérica?)');
-      } else if (parseFloat(taxa_conversao) >= 30) {
+      } else if (parseFloat(String(taxa_conversao)) >= 30) {
         relatorio.recomendacoes.push('Ótimo desempenho! Considerar escalar abordagem');
       }
 

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead } from '../types.js';
+
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -135,7 +135,7 @@ export class FinanciamentoAgent {
           tipo_juros: 'residencial',
         });
 
-        if (resultado.success) {
+        if (resultado.success && resultado.melhor_opcao) {
           comparacao.push({
             sistema,
             melhor_banco: resultado.melhor_opcao.banco,
@@ -150,7 +150,9 @@ export class FinanciamentoAgent {
       return {
         success: true,
         comparacao,
-        recomendacao: `O melhor custo é ${comparacao[0].sistema === 'Price Table' ? 'Price Table' : 'SAC'} com ${comparacao[0].melhor_banco}, com parcela de ${comparacao[0].parcela_menor}`,
+        recomendacao: comparacao[0]
+          ? `O melhor custo é ${comparacao[0].sistema === 'Price Table' ? 'Price Table' : 'SAC'} com ${comparacao[0].melhor_banco}, com parcela de ${comparacao[0].parcela_menor}`
+          : 'Nenhuma opção disponível',
       };
     } catch (error) {
       console.error('[FinanciamentoAgent] Erro ao comparar:', error);

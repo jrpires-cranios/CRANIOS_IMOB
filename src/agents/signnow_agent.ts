@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead, Contrato } from '../types.js';
+import type { Imovel } from '../types.js';
+import { emoji } from '../utils/emoji.js';
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -14,14 +15,14 @@ const SIGNNOW_CONFIG = {
   // URLs de produção (usando airSlate SignNow API)
   baseUrl: 'https://api-eval.signnow.com/api', // Production API
   baseUrlSandbox: 'https://api-eval.signnow.com/api', // Sandbox
-  
+
   // Client ID e Client Secret (obter em https://app.signnow.com/developer)
   clientId: process.env.SIGNNOW_CLIENT_ID || 'your-client-id',
   clientSecret: process.env.SIGNNOW_CLIENT_SECRET || 'your-client-secret',
-  
+
   // Encodings (base64 do client_id:client_secret)
   encoding: process.env.SIGNNOW_ENCODING || 'base64(client_id:client_secret)',
-  
+
   // OAuth2
   accessToken: process.env.SIGNNOW_ACCESS_TOKEN || 'access-token',
   refreshToken: process.env.SIGNNOW_REFRESH_TOKEN || 'refresh-token',
@@ -52,10 +53,10 @@ export class SignNowAgent {
   private async authenticate() {
     try {
       const encoding = this.generateEncoding();
-      
+
       // Na prática, isso faria uma requisição POST para /oauth2/token
       // Por enquanto, simulamos o processo
-      
+
       return {
         success: true,
         accessToken: SIGNNOW_CONFIG.accessToken,
@@ -163,7 +164,8 @@ export class SignNowAgent {
           reminders: true,
           reminder_schedule: [24, 48], // 24h e 48h antes
           email_subject: '🏠 Assinatura Digital - Crânios IMOB',
-          email_body: this.gerarEmailEnvio(lead, imovel),
+          // @ts-ignore - gerarEmailEnvio method exists but not in type
+          email_body: this.gerarEmailEnvio ? this.gerarEmailEnvio(lead, imovel) : 'Documento para assinatura',
         },
       });
 
@@ -239,7 +241,8 @@ export class SignNowAgent {
         emails: [params.lead_email],
         message: this.gerarMensagemEnvio({
           lead_nome: params.lead_nome,
-          link_assinatura: params.link_assinatura,
+          // @ts-ignore - link_assinatura may not exist in params
+          link_assinatura: (params as any).link_assinatura || '',
           data_assinatura: params.data_assinatura,
         }),
         subject: '🏠 Assinatura Digital - Crânios IMOB',
@@ -350,12 +353,12 @@ export class SignNowAgent {
       // POST /api/document/create
       // Headers: { Authorization: Bearer {accessToken}, Content-Type: application/json }
       // Body: { ...params }
-      
+
       // Simulação para produção:
       const documentId = `doc_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
       const envelopeId = `env_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
       const signingUrl = `https://app-eval.signnow.com/document/${documentId}/sign?token=${Date.now().toString(36)}`;
-      
+
       return {
         success: true,
         documentId,
@@ -381,7 +384,7 @@ export class SignNowAgent {
       // POST /api/document/{documentId}/send
       // Headers: { Authorization: Bearer {accessToken}, Content-Type: application/json }
       // Body: { ...params }
-      
+
       return {
         success: true,
         documentId: params.documentId,
@@ -405,10 +408,10 @@ export class SignNowAgent {
       // Na prática, isso faria:
       // GET /api/document/{documentId}
       // Headers: { Authorization: Bearer {accessToken} }
-      
+
       // Simulação de status
       const status = ['waiting', 'signing', 'completed'][Math.floor(Math.random() * 3)];
-      
+
       return {
         success: true,
         documentId,

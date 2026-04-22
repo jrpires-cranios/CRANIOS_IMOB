@@ -1,0 +1,11 @@
+proprietario_id,nome,telefone,email,documento,tipo_pessoa,endereco,cidade,estado,observacoes,status
+1001,Marcelo Andrade,+55 79 98108-7718,marcelo.proprietario@exemplo.com,48737039179,Física,"Rua Exemplo, 955 - Brotas, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1002,Luciana Oliveira,+55 79 99572-3079,luciana.proprietario@exemplo.com,51776547088,Jurídica,"Rua Exemplo, 299 - Jabotiana, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1003,Roberto Souza,+55 79 99337-3348,roberto.proprietario@exemplo.com,80895809852,Física,"Rua Exemplo, 956 - 13 de Julho, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1004,Fernanda Lima,+55 79 99587-7327,fernanda.proprietario@exemplo.com,28407719541,Física,"Rua Exemplo, 342 - Farolândia, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1005,Paulo Henrique,+55 79 99365-3329,paulo.proprietario@exemplo.com,72311831941,Física,"Rua Exemplo, 992 - Coroa do Meio, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Inativo
+1006,Patrícia Santos,+55 79 98632-9322,patrícia.proprietario@exemplo.com,30129355503,Física,"Rua Exemplo, 989 - Luzia, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1007,Gustavo Carvalho,+55 79 98854-8592,gustavo.proprietario@exemplo.com,69352999655,Física,"Rua Exemplo, 505 - Coroa do Meio, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1008,Helena Prado,+55 79 99709-2554,helena.proprietario@exemplo.com,14885335545,Física,"Rua Exemplo, 820 - Atalaia, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Inativo
+1009,Rogério Teles,+55 79 99195-1850,rogério.proprietario@exemplo.com,71075955892,Jurídica,"Rua Exemplo, 113 - Jardins, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Ativo
+1010,Amanda Figueiredo,+55 79 99879-1491,amanda.proprietario@exemplo.com,87093526487,Física,"Rua Exemplo, 51 - Aruana, Aracaju/SE",Aracaju,SE,Proprietário com contrato ativo com a Crânios IMOB.,Inativo

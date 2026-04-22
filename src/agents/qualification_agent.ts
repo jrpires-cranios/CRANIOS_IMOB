@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { searchAgent } from './search_agent.js';
 import type { Imovel } from '../types.js';
+import { searchAgent } from './search_agent.js';
+
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -81,7 +82,18 @@ export class QualificationAgent {
 
       // Salva lead no Supabase
       if (email || telefone) {
-        await this.saveLead(params);
+        const leadSalvo = await this.saveLead(params);
+        if (leadSalvo) {
+          const leadData = {
+            id: leadSalvo.id,
+            temperatura: 'morno', // Definição inicial conservadora
+            tipo_imovel: tipo_interesse || null,
+            faixa_valor: orcamento || null,
+            score_dificuldade: 50
+          };
+          const { LeadRouterService } = await import('../services/lead_router.service.js');
+          await LeadRouterService.distribuir(leadData);
+        }
       }
 
       return {
@@ -172,7 +184,7 @@ export class QualificationAgent {
   /**
    * Salva lead no Supabase
    */
-  private async saveLead(params: any) {
+  private async saveLead(params: any): Promise<any | null> {
     try {
       const { nome, email, telefone, orcamento, quartos, cidade, tipo_interesse } = params;
 
@@ -188,15 +200,18 @@ export class QualificationAgent {
         status: 'novo',
       };
 
-      const { error } = await supabase.from('leads').insert([leadData]);
+      const { data, error } = await supabase.from('leads').insert([leadData]).select().single();
 
       if (error) {
         console.error('[QualificationAgent] Erro ao salvar lead:', error);
+        return null;
       }
 
       console.log('[QualificationAgent] Lead salvo com sucesso');
+      return data;
     } catch (error) {
       console.error('[QualificationAgent] Erro ao salvar lead:', error);
+      return null;
     }
   }
 }

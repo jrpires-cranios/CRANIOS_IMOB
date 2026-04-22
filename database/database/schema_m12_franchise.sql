@@ -1,0 +1,1 @@
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES clientes(id);

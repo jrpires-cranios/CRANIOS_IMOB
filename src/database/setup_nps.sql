@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS public.nps_responses ( id UUID PRIMARY KEY DEFAULT gen_random_uuid(), tenant_id UUID NOT NULL, lead_id UUID NOT NULL REFERENCES public.lead_memory(id), imovel_id UUID, reservation_id UUID, score INTEGER CHECK (score >= 0 AND score <= 10), feed_text TEXT, created_at TIMESTAMPTZ DEFAULT NOW(), status TEXT DEFAULT 'pending' );

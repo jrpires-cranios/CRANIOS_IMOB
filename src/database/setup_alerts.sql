@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS public.property_alerts_log ( id UUID PRIMARY KEY DEFAULT gen_random_uuid(), tenant_id UUID NOT NULL, lead_id UUID NOT NULL REFERENCES public.lead_memory(id), imovel_id UUID NOT NULL, channel TEXT NOT NULL, match_score INTEGER, sent_at TIMESTAMPTZ DEFAULT NOW(), status TEXT DEFAULT 'sent', replied_at TIMESTAMPTZ, UNIQUE(tenant_id, lead_id, imovel_id) );

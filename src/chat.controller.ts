@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
 import { chatAgent } from './chat_agent.js';
-import type { ChatRequest, RespostaChat } from './types.js';
+import { supabase } from './config/supabase.js';
+import type { Request, Response } from 'express';
 
 export async function handleChat(req: Request, res: Response) {
-  const { message, sessionId, cliente } = req.body as ChatRequest;
+  const { message, sessionId, cliente } = req.body as any;
 
   console.log('[ChatAPI] Nova mensagem:', message);
   console.log('[ChatAPI] Cliente:', cliente);
@@ -15,7 +15,6 @@ export async function handleChat(req: Request, res: Response) {
     }
 
     // Salva mensagem no Supabase
-    const supabase = (await import('./config/supabase.js')).default;
     await supabase.from('mensagens').insert([{
       conversa_id: sessionId,
       session_id: sessionId,
@@ -28,29 +27,34 @@ export async function handleChat(req: Request, res: Response) {
     // Processa mensagem usando o ChatAgent (com 7 agentes)
     const resultado = await chatAgent.processarMensagem(message, sessionId);
 
+    // @ts-ignore - agente_executado may exist in resultado
+    const agenteExecutado = resultado.agente_executado || resultado.data?.agente_executado;
+    // @ts-ignore - tipo may exist in resultado
+    const tipo = resultado.tipo || 'chat';
+
     // Salva resposta do assistente
-    if (resultado.agente_executado) {
+    if (agenteExecutado) {
       await supabase.from('mensagens').insert([{
         conversa_id: sessionId,
         session_id: sessionId,
         role: 'assistant',
         content: resultado.response,
         metadata: {
-          agente: resultado.agente_executado,
-          tipo: resultado.tipo,
+          agente: agenteExecutado,
+          tipo: tipo,
           acao_sugerida: resultado.acao,
         },
         created_at: new Date().toISOString(),
       }]);
     }
 
-    console.log('[ChatAPI] Resposta gerada por:', resultado.agente_executado);
+    console.log('[ChatAPI] Resposta gerada por:', agenteExecutado);
 
     res.json({
       success: true,
       response: resultado.response,
-      agente: resultado.agente_executado,
-      tipo: resultado.tipo,
+      agente: agenteExecutado,
+      tipo: tipo,
       data: resultado.data,
       acao: resultado.acao,
       conversa: chatAgent.getConversa(),
@@ -69,7 +73,6 @@ export async function getHistoricoChat(req: Request, res: Response) {
   const { sessionId } = req.params;
 
   try {
-    const supabase = (await import('./config/supabase.js')).default;
     const { data } = await supabase
       .from('mensagens')
       .select('*')
@@ -94,7 +97,6 @@ export async function criarConversa(req: Request, res: Response) {
   const { nome, email, telefone } = req.body;
 
   try {
-    const supabase = (await import('./config/supabase.js')).default;
     const { data } = await supabase
       .from('conversas')
       .insert([{
@@ -125,7 +127,6 @@ export async function criarLead(req: Request, res: Response) {
   const { nome, email, telefone, interesse, imoveis_interesse, orcamento_min, orcamento_max, observacoes } = req.body;
 
   try {
-    const supabase = (await import('./config/supabase.js')).default;
     const { data, error } = await supabase
       .from('leads')
       .insert([{

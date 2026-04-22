@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Imovel, Lead, Agendamento } from '../types.js';
+import type { Imovel } from '../types.js';
+import { emoji } from '../utils/emoji.js';
 
 const supabase = createClient(
   'https://rbhkwmesmvytqdfuwcie.supabase.co',
@@ -14,7 +15,7 @@ const DOCUMIND_CONFIG = {
   // Em produção, usar URLs reais do DocuSign
   baseUrl: 'https://demo.docusign.net/restapi',
   accountId: process.env.DOCUMIND_ACCOUNT_ID || 'demo-account-id',
-  
+
   // Token de acesso (Em produção: OAuth2 flow)
   accessToken: process.env.DOCUMIND_ACCESS_TOKEN || 'demo-access-token',
 };
@@ -143,8 +144,8 @@ export class DocuSignAgent {
       // Gera mensagem de envio
       const mensagem = this.gerarMensagemEnvio({
         lead_nome: params.lead_nome,
-        link_assinatura: contrato.link_assinatura,
-        data_assinatura: params.data_assinatura,
+        link_assinatura: contrato.link_assinatura || '',
+        data_assinatura: params.data_assinatura || '',
       });
 
       console.log('[DocuSignAgent] Contrato enviado para assinatura');
@@ -185,8 +186,8 @@ export class DocuSignAgent {
       }
 
       // Simula verificação de status
-      const statusAtual = contrato.status === 'enviado_assinatura' 
-        ? 'em_assinatura' 
+      const statusAtual = contrato.status === 'enviado_assinatura'
+        ? 'em_assinatura'
         : contrato.status === 'em_assinatura'
           ? 'assinado'
           : contrato.status;
@@ -431,12 +432,14 @@ _________________________________________
     link_assinatura: string;
     data_assinatura: string;
   }): string {
-    const dataFormatada = new Date(params.data_assinatura).toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    const dataFormatada = params.data_assinatura
+      ? new Date(params.data_assinatura).toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+      : 'a definir';
 
     return `Olá, ${params.lead_nome}! ${emoji('✍️')}
 
@@ -476,7 +479,7 @@ ${emoji('🏠')}`;
    * Gera mensagem de status
    */
   private gerarMensagemStatus(status: string): string {
-    const mensagens = {
+    const mensagens: Record<string, string> = {
       'pendente_assinatura': '⏳ Contrato aguardando envio para assinatura.',
       'enviado_assinatura': '📤 Contrato enviado! Aguardando sua assinatura.',
       'em_assinatura': '✍️ Contrato está sendo assinado. Acompanhe pelo link.',
