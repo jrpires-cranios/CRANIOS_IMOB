@@ -6,7 +6,7 @@ aptPkgs = [
   "ffmpeg",             # Gemini-TTS: conversão PCM → OGG_OPUS
   "fonts-liberation",
   "fonts-noto-color-emoji",
-  "libasound2",
+  "libasound2t64",
   "libatk-bridge2.0-0",
   "libatk1.0-0",
   "libcups2",
