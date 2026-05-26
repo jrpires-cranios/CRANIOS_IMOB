@@ -27,6 +27,7 @@ import { ticketService } from './services/ticket.service.js';
 import { whatsappService } from './services/whatsapp.service.js';
 import { transcriptionService } from './services/transcription.service.js';
 import { humanizerService } from './services/humanizer.service.js';
+import { difyCeciliaService } from './services/dify-cecilia.service.js';
 import { whatsappResponseService, type AccumulatedMessage } from './services/whatsapp-response.service.js';
 import * as automation from './services/automation.service.js';
 import * as leaseService from './services/lease.service.js';
@@ -225,7 +226,7 @@ app.post('/api/tickets', async (req, res) => {
 });
 
 // ========== CRM LEAD CAPTURE (PÁGINA DE VENDAS) ==========
-app.post('/api/crm-lead-capture', async (req, res) => {
+app.post('/api/crm-lead-capture-legacy', async (req, res) => {
     try {
         const data = req.body;
         // Esperado: { empresa, contato, email, faturamento, lucroLiquido, roi, reducaoAnualFolha, custoSistema, pessoasCortadas }
@@ -685,7 +686,7 @@ app.post('/api/imoveis/ingest', uploadIngest, async (req, res) => {
             } else {
                 r2upload = r2StorageService;
             }
-            pdfKey = await r2upload.uploadPropertyPDF(clienteId || 'demo', nomeSeguro, file.buffer);
+            pdfKey = await r2upload.uploadPropertyPDF(file.buffer, nomeSeguro.replace(/\.pdf$/i, ''), clienteId || 'demo');
             steps.push(`✅ PDF enviado para R2: ${pdfKey}`);
         }
 
@@ -773,7 +774,7 @@ app.post('/api/imoveis/ingest', uploadIngest, async (req, res) => {
             if (finalidade === 'locacao') imovelRecord.preco_locacao = parseFloat(meta.preco);
             else imovelRecord.preco_venda = parseFloat(meta.preco);
         }
-        if (pdfKey) imovelRecord.foto_principal = pdfKey;
+        if (pdfKey) imovelRecord.book_pdf_url = pdfKey;
 
         const { data: imovel, error: imovelError } = await supabase
             .from('imoveis').insert([imovelRecord]).select().single();
@@ -917,24 +918,93 @@ app.post('/api/chat', async (req, res) => {
         }
 
         const resultado = await chatAgent.processarMensagem(message, sessionId, cliente, imovelId, empreendimento);
+        const humanized = await humanizerService.humanize(resultado.response);
 
         await supabase.from('mensagens').insert([{
             session_id: sessionId,
             role: 'assistant',
-            content: resultado.response,
+            content: humanized,
             metadata: { agente: resultado.agente, tipo: resultado.tipo, acao: resultado.acao, data: resultado.data },
             created_at: new Date().toISOString(),
         }]);
 
         res.json({
             success: true,
-            response: resultado.response,
+            response: humanized,
             agente: resultado.agente,
             tipo: resultado.tipo,
             data: resultado.data
         });
     } catch (error: any) {
         console.error('[ChatAPI] Erro:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/sales/cecilia-chat', async (req, res) => {
+    const { message, sessionId, context = {} } = req.body;
+    if (!message || !sessionId) {
+        return res.status(400).json({ success: false, error: 'message e sessionId são obrigatórios' });
+    }
+
+    try {
+        const cliente = {
+            id: 'cranios-sales',
+            slug: 'cranios-sales',
+            nome: 'Lead da Landing',
+            tenant_id: 'cranios-sales',
+        };
+
+        await supabase.from('mensagens').insert([{
+            session_id: sessionId,
+            role: 'user',
+            content: message,
+            metadata: { canal: 'landing_cecilia', ...context },
+            created_at: new Date().toISOString(),
+        }]);
+
+        const enrichedMessage = [
+            message,
+            context?.roiData ? `\n\n[Contexto ROI da landing]\n${JSON.stringify(context.roiData).slice(0, 1500)}` : '',
+            context?.pageUrl ? `\n\n[Página de origem] ${context.pageUrl}` : '',
+        ].join('');
+
+        const difyResult = await difyCeciliaService.sendMessage({
+            sessionId,
+            message,
+            inputs: {
+                source: 'landing_page',
+                page_url: context?.pageUrl || '',
+                roi_data: context?.roiData || null,
+            },
+        }).catch(err => {
+            console.error('[CeciliaChat] Dify indisponível, usando fallback local:', err.message);
+            return null;
+        });
+
+        const resultado = difyResult
+            ? { response: difyResult.answer, agente: 'Cecília', tipo: 'dify', data: { conversationId: difyResult.conversationId, messageId: difyResult.messageId } }
+            : await chatAgent.processarMensagem(enrichedMessage, sessionId, cliente);
+
+        const humanized = await humanizerService.humanize(resultado.response);
+
+        await supabase.from('mensagens').insert([{
+            session_id: sessionId,
+            role: 'assistant',
+            content: humanized,
+            metadata: { canal: 'landing_cecilia', agente: 'Cecília', tipo: resultado.tipo },
+            created_at: new Date().toISOString(),
+        }]);
+
+        res.json({
+            success: true,
+            response: humanized,
+            agente: 'Cecília',
+            tipo: resultado.tipo,
+            data: resultado.data,
+        });
+    } catch (error: any) {
+        console.error('[CeciliaChat] Erro:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -1624,7 +1694,7 @@ app.post('/api/clientes/:slug/lancamentos/upload-url', async (req, res) => {
         const r2 = R2StorageService.forCliente(bucketName);
 
         const nomeSeguro = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const key = `Lançamentos / ${nomeSeguro} `;
+        const key = `Lançamentos/${nomeSeguro}`;
         const uploadUrl = await r2.getSignedUploadUrl(key, 3600); // expira em 1h
 
         res.json({
@@ -1764,7 +1834,7 @@ app.post('/api/webhooks/uazapi', async (req, res) => {
 
         console.log(`[UazAPI] ${isAudio ? '🎙️' : '💬'} ${senderPhone} (${senderName}): ${resolvedText.substring(0, 60)}`);
 
-        // ── Acumulador: aguarda 3s para juntar mensagens rápidas ─────
+        // ── Acumulador: aguarda 5s para juntar mensagens rápidas ─────
         const sessionId = `whatsapp_${senderPhone}`;
         const clienteCtx = cliente
             ? { id: cliente.id, nome: senderName, slug: cliente.slug, telefone: senderPhone }
@@ -1895,17 +1965,29 @@ app.post('/api/onboarding/submit', async (req, res) => {
             await supabase.from('tenant_integrations').insert(integrations);
         }
 
-        // 4. Iniciar Pipeline RAG (Assíncrono para não travar request longa da UI de cara, ou sincrono rápido)
+        // 4. Iniciar Pipeline de provisionamento em background para não travar a UI.
         // Aqui importamos o serviço RAG novo
         const { ragGeneratorService } = await import('./services/rag-generator.service.js');
 
-        // Despachamos a geração para rodar em facking background no servidor Node
-        ragGeneratorService.generateTenantRAG(tenantId, slug, formData)
+        Promise.resolve()
+            .then(async () => {
+                const bucketName = formData.infra?.r2Bucket || slug;
+                const hasR2Credentials = process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY;
+
+                if (hasR2Credentials) {
+                    await onboardingService.createClientBucket(bucketName);
+                    await onboardingService.setupBucketFolders(bucketName);
+                } else {
+                    console.warn('[Onboarding] Credenciais R2 ausentes. Bucket não foi provisionado automaticamente.');
+                }
+
+                await ragGeneratorService.generateTenantRAG(tenantId, slug, formData);
+            })
             .then(() => {
                 supabase.from('tenants').update({ status: 'active', provisioned_at: new Date().toISOString() }).eq('id', tenantId).then();
-                console.log(`[Onboarding] Tenant ${slug} provisionado com sucesso pelo Engine RAG.`);
+                console.log(`[Onboarding] Tenant ${slug} provisionado com sucesso.`);
             })
-            .catch(e => console.error('[Onboarding] Falha na geração do RAG', e));
+            .catch(e => console.error('[Onboarding] Falha no provisionamento automático', e));
 
         // 5. Retornar URL do dashboard para a UI
         res.json({

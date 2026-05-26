@@ -338,14 +338,6 @@ export class ChatAgent {
       temperature: 0.6
     });
 
-    return {
-      response: respostaFinal,
-      agente: persona.name,
-      tipo: ehBusca ? 'busca' : 'outros',
-      data: dadosAcao,
-      acao: acaoSugerida
-    };
-
     // --- PÓS-PROCESSAMENTO: Salvar extração de memória ---
     // Fazemos assincronamente (fire and forget) para não atrasar a resposta
     if (telefone) {

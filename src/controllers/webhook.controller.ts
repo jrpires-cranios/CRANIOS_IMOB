@@ -34,6 +34,31 @@ export const handleAsaasWebhook = async (req: Request, res: Response) => {
 
         console.log(`[Webhook Asaas] Pagamento recebido: ${asaasCustId}`);
 
+        // Fluxo novo da landing: o checkout grava o landing_lead.id em externalReference.
+        // Quando ele existe, evitamos cair no pipeline antigo com e-mail simulado.
+        if (payment?.externalReference) {
+            const { data: landingLead } = await supabase
+                .from('landing_leads')
+                .select()
+                .eq('id', payment.externalReference)
+                .maybeSingle();
+
+            if (landingLead) {
+                await supabase
+                    .from('landing_leads')
+                    .update({
+                        status: 'pagamento_confirmado',
+                        asaas_payment_id: payment.id || landingLead.asaas_payment_id,
+                        updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', landingLead.id);
+
+                await salesAutomationService.enviarContrato(landingLead.id).catch(console.error);
+                await automation.telegram.notifyCEO(`💰 *PAGAMENTO LANDING CONFIRMADO* - R$ ${paymentValue}\nCliente: ${landingLead.imobiliaria || landingLead.nome} (${landingLead.email})\n\nContrato Assinafy em processamento.`);
+                return;
+            }
+        }
+
         // Cria/Atualiza no Pipeline
         const { data: client, error: clientErr } = await supabase.from('client_pipeline')
             .upsert({ email: clientEmail, name: clientName, asaas_customer_id: asaasCustId, plan_value: paymentValue, status: 'PAGAMENTO_CONFIRMADO' })
@@ -60,18 +85,6 @@ export const handleAsaasWebhook = async (req: Request, res: Response) => {
 
         await automation.telegram.notifyCEO(`💰 *NOVO PAGAMENTO* - R$ ${paymentValue}\nCliente: ${clientName} (${clientEmail})\n\nCredenciais e contrato em processamento!`);
 
-        // Landing Lead: se o pagamento tiver externalReference vinculado a um landing_lead, enviar contrato
-        if (payment?.externalReference) {
-            const { data: landingLead } = await supabase
-                .from('landing_leads')
-                .select()
-                .eq('id', payment.externalReference)
-                .maybeSingle();
-            if (landingLead) {
-                await salesAutomationService.enviarContrato(landingLead.id).catch(console.error);
-            }
-        }
-
     } catch (e: any) {
         console.error('[Webook Asaas Error] Pipeline:', e);
     }
@@ -88,33 +101,34 @@ export const handleAssinafyWebhook = async (req: Request, res: Response) => {
     console.log(`[Webhook Assinafy] Documento assinado: ${document_id}`);
 
     try {
+        const docId = req.body?.document?.id || req.body?.id || document_id;
+
         // 1. Fetch from Pipeline
-        const { data: client } = await supabase.from('client_pipeline').select().eq('assinafy_document_id', document_id).single();
-        if (!client) return;
+        const { data: client } = await supabase.from('client_pipeline').select().eq('assinafy_document_id', document_id).maybeSingle();
+        if (client) {
+            // 2. Download and upload PDF (Simulated Assinafy / Supabase bucket implementation)
+            const pdfData = await automation.downloadAssinafyPDF(document_id);
+            const path = `contratos/${client.id}/contract_signed.pdf`;
 
-        // 2. Download and upload PDF (Simulated Assinafy / Supabase bucket implementation)
-        const pdfData = await automation.downloadAssinafyPDF(document_id);
-        const path = `contratos/${client.id}/contract_signed.pdf`;
+            // Upload storage (service API)
+            await supabase.storage.from('cranios-imob').upload(path, pdfData, { contentType: 'application/pdf', upsert: true });
 
-        // Upload storage (service API)
-        await supabase.storage.from('cranios-imob').upload(path, pdfData, { contentType: 'application/pdf', upsert: true });
+            // 3. Update Pipeline
+            await supabase.from('client_pipeline').update({
+                contract_storage_path: path,
+                contract_signed_at: new Date(),
+                status: 'CONTRATO_ASSINADO',
+                secure_form_token: JSON.stringify({ exp: Date.now() + 86400000, id: client.id }) // Token 24h
+            }).eq('id', client.id);
 
-        // 3. Update Pipeline
-        await supabase.from('client_pipeline').update({
-            contract_storage_path: path,
-            contract_signed_at: new Date(),
-            status: 'CONTRATO_ASSINADO',
-            secure_form_token: JSON.stringify({ exp: Date.now() + 86400000, id: client.id }) // Token 24h
-        }).eq('id', client.id);
+            // 4. Send email unlocking Onboard Cal.com & Secure API Form url
+            const safeUrl = `https://cranios-imob.com/secure-keys?token=${Buffer.from(client.id).toString('base64')}`;
+            await automation.mail.sendOnboardingUnlock(client.email, client.name, safeUrl);
 
-        // 4. Send email unlocking Onboard Cal.com & Secure API Form url
-        const safeUrl = `https://cranios-imob.com/secure-keys?token=${Buffer.from(client.id).toString('base64')}`;
-        await automation.mail.sendOnboardingUnlock(client.email, client.name, safeUrl);
-
-        await automation.telegram.notifyCEO(`✍️ *Contrato Assinado!*\nCliente: ${client.name}\n\nO link de Agendamento Cal.com e o Forms Seguro de API Keys já foram liberados para a imobiliária!`);
+            await automation.telegram.notifyCEO(`✍️ *Contrato Assinado!*\nCliente: ${client.name}\n\nO link de Agendamento Cal.com e o Forms Seguro de API Keys já foram liberados para a imobiliária!`);
+        }
 
         // Landing Lead: se o documento assinado estiver vinculado a um landing_lead, enviar onboarding kit
-        const docId = req.body?.document?.id || req.body?.id || document_id;
         if (docId) {
             const { data: ll } = await supabase
                 .from('landing_leads')

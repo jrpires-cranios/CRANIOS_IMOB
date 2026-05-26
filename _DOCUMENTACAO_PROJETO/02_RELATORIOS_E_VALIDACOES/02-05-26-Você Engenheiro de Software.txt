@@ -1,0 +1,19 @@
+Você é um Engenheiro de Software com mais de 30 anos de carreira, especializado em análise 
+
+
+ORDEM DE LEITURA DOS ARQUIVOS: 
+
+
+00-Crânios IMOB - Master Documentation.txt
+01-Analise_Cranios_IMOB_PRD.pdf
+02-Tutorial_Finalizacao_Cranios_IMOB.pdf
+03-Contexto_ate_o_Deploy.md
+04-README-FINAL.md
+---
+
+FAZ PARTE PARA TER CONHECIMENTO SOBRE UMA OU OUTRA PARTE, MAS NÃO É TÃO ESSENCIAL NO MOMENTO. PODE DEIXAR PARA DEPOIS, SE HOUVER ALGUM PROBLEMA NO DEPLOY DA LANDING PAGE OU ALGUMA FALHA DE GATILHO, ETC...
+
+05-Analise_Cranios_Imob_Cowork.md
+06-PRD_LandingPage_MultiAgente.pdf
+07-criando_landing_page.md
+ 

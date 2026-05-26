@@ -40,7 +40,7 @@ export class PineconeService {
     private async createEmbedding(text: string): Promise<number[]> {
         if (!process.env.OPENAI_API_KEY) {
             console.warn('[Pinecone] OPENAI_API_KEY não configurada — embedding não disponível');
-            return new Array(1536).fill(0);
+            return new Array(1024).fill(0);
         }
 
         try {
@@ -53,7 +53,7 @@ export class PineconeService {
             return response.data[0].embedding;
         } catch (error: any) {
             console.error('[Pinecone] Erro ao gerar embedding:', error.message);
-            return new Array(1536).fill(0);
+            return new Array(1024).fill(0);
         }
     }
 
@@ -139,8 +139,13 @@ export class PineconeService {
 
     /**
      * ========================================================
-     * BUSCA POR AGENTE — usa namespace do cliente quando disponível
-     * Formato do namespace: {agente}_{tipo}_{cliente_id} ou {agente}_{tipo} (global)
+     * BUSCA POR AGENTE — usa namespace do cliente quando disponível.
+     *
+     * Ordem:
+     * 1. padrão novo multi-tenant: {tenantSlugOuId}:{agente}
+     * 2. padrão antigo por agente/tipo/cliente
+     * 3. padrão antigo global por agente/tipo
+     * 4. namespace global historico por tipo (ex: lancamentos)
      * ========================================================
      */
 
@@ -150,22 +155,41 @@ export class PineconeService {
         pergunta: string,
         clienteId?: string
     ): Promise<string> {
-        // Primeiro tenta namespace específico do cliente
+        const normalizedAgente = agente.toLowerCase();
+        const normalizedTipo = tipo.toLowerCase();
+
+        // Primeiro tenta namespace novo gerado no onboarding/ingestao atual
         if (clienteId) {
-            const nsCliente = `${agente}_${tipo}_${clienteId}`;
-            const resultsCliente = await this.query(pergunta, 3, nsCliente);
-            if (resultsCliente.length > 0) {
-                return this.formatarContexto(resultsCliente);
+            const namespacesCliente = [
+                `${clienteId}:${normalizedAgente}`.toLowerCase(),
+                `${normalizedAgente}_${normalizedTipo}_${clienteId}`,
+                `${normalizedTipo}_${clienteId}`,
+            ];
+
+            for (const namespace of namespacesCliente) {
+                const resultsCliente = await this.query(pergunta, 3, namespace);
+                if (resultsCliente.length > 0) {
+                    return this.formatarContexto(resultsCliente);
+                }
             }
         }
 
-        // Fallback para namespace global
-        const nsGlobal = `${agente}_${tipo}`;
-        const results = await this.query(pergunta, 3, nsGlobal, {
-            agente,
-            tipo
-        });
-        return this.formatarContexto(results);
+        // Fallbacks globais para compatibilidade com bases antigas
+        const fallbacks = [
+            `${normalizedAgente}_${normalizedTipo}`,
+            normalizedTipo,
+            normalizedAgente,
+        ];
+
+        for (const namespace of fallbacks) {
+            const results = await this.query(pergunta, 3, namespace, {
+                agente: normalizedAgente,
+                tipo: normalizedTipo
+            });
+            if (results.length > 0) return this.formatarContexto(results);
+        }
+
+        return '';
     }
 
     async buscarContextoRicardo(pergunta: string, tipoNegocio: 'vendas' | 'locacao', clienteId?: string): Promise<string> {

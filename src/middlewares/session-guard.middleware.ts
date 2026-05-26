@@ -9,7 +9,19 @@ import { sessionService } from '../services/session.service';
 export const sessionGuard = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         // Ignora endpoints não-autenticados ou públicos
-        const publicPaths = ['/webhooks', '/imoveis', '/health', '/auth', '/tickets'];
+        const publicPaths = [
+            '/webhooks',
+            '/imoveis',
+            '/health',
+            '/auth',
+            '/tickets',
+            '/sales/landing-lead',
+            '/sales/checkout',
+            '/sales/cecilia-chat',
+            '/onboarding/submit',
+            '/onboarding/secure-keys',
+            '/secure/checkout',
+        ];
         if (publicPaths.some(p => req.path.startsWith(p))) {
             return next();
         }

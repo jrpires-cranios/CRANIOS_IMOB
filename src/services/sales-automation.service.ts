@@ -107,7 +107,12 @@ export const salesAutomationService = {
 
     // Criar customer no Asaas
     const _asaasProduction = process.env.NODE_ENV === 'production';
-    const _asaasKey = _asaasProduction ? process.env.ASAAS_API_KEY! : ((process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX) || process.env.ASAAS_API_KEY!);
+    const _asaasKey = _asaasProduction
+      ? process.env.ASAAS_API_KEY
+      : ((process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX) || process.env.ASAAS_API_KEY);
+    if (!_asaasKey) {
+      throw new Error('Chave Asaas não configurada. Defina ASAAS_API_KEY em produção ou ASAAS_SANDBOX no sandbox.');
+    }
     const _asaasBase = _asaasProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     const asaasHeaders = {
       'access_token': _asaasKey,
@@ -220,7 +225,10 @@ export const salesAutomationService = {
     if (error || !lead) throw new Error('Lead não encontrado: ' + leadId);
 
     const config = PLANO_CONFIG[lead.plano as Plano] || PLANO_CONFIG.pro;
-    const calcomLink = 'https://cal.com/cranios/onboarding-cranios-imob';
+    const calcomLink =
+      process.env.CALCOM_ONBOARDING_URL ||
+      process.env.CALCOM_ONBOARDING_EVENT_URL ||
+      'https://cal.com/cranios/onboarding-cranios-imob';
 
     // Criar tenant pré-ativo
     await supabase

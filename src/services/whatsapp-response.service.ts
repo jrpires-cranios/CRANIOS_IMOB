@@ -2,7 +2,7 @@
  * WhatsApp Response Service — Crânios IMOB
  *
  * Responsável por:
- * 1. ACUMULADOR: agrupa mensagens rápidas do mesmo remetente (janela de 3s)
+ * 1. ACUMULADOR: agrupa mensagens rápidas do mesmo remetente (janela de 5s)
  *    → Se cliente manda 3 mensagens seguidas, Elena lê todas juntas e responde uma vez
  *
  * 2. DIVISOR INTELIGENTE: quebra respostas longas em blocos naturais
@@ -47,7 +47,7 @@ class WhatsAppResponseService {
         phone: string,
         message: AccumulatedMessage,
         onProcess: ProcessCallback,
-        windowMs = 3000
+        windowMs = 5000
     ): void {
         const existing = this.pending.get(phone);
         if (existing) clearTimeout(existing.timer);

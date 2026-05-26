@@ -151,9 +151,14 @@ export class PDFGeneratorService {
         const html = this.template(data);
 
         // 3. Gerar PDF com Puppeteer
+        const puppeteerArgs = process.env.PUPPETEER_ARGS
+            ? process.env.PUPPETEER_ARGS.split(/\s+/).filter(Boolean)
+            : ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'];
+
         const browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+            args: puppeteerArgs
         });
 
         const page = await browser.newPage();

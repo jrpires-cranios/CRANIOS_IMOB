@@ -1,0 +1,8 @@
+Crânios IMOB
+
+Quero saber qual o grau de dificuldade para 
+ manifest.json configurado, o que o torna um PWA (Progressive Web App). Isso significa que hoje, sem mais nenhum código, qualquer usuário já pode "instalar" o app na tela inicial do celular com experiência quase nativa.
+
+para vários tipos de tarefas como, por exemplo, acessar a área do corretor via telefone ou área do gestor e áreas administrativas que podem ser utilizadas o PWA e transformar numa aparência de APP salvando o ícone na área de trabalho dos smartphones. Porém ,apara isso, teria que ver a questão de responsividade. 
+
+Além disso, quero saber se no projeto eu tenho wildcard SSL (Let's Encrypt) para ir abrindo vários subdomínios ex: manesertao.cranios.pro  

@@ -4,7 +4,17 @@ dotenv.config();
 
 const API_KEY = process.env.CALCOM_API_KEY || '';
 const BASE_URL = 'https://api.cal.com/v2';
-const BASE_URL_V1 = 'https://api.cal.com/v1';
+const CAL_EVENT_TYPES_VERSION = '2024-06-14';
+const CAL_SLOTS_VERSION = '2024-09-04';
+const CAL_BOOKINGS_VERSION = '2026-02-25';
+
+function calHeaders(apiKey: string, version: string, json = false): Record<string, string> {
+    return {
+        ...(json ? { 'Content-Type': 'application/json' } : {}),
+        Authorization: `Bearer ${apiKey}`,
+        'cal-api-version': version,
+    };
+}
 
 // ============================================================
 // EVENT SLUGS CONFIGURADOS NO CAL.COM (ceo.cranios@gmail.com)
@@ -50,12 +60,14 @@ export class CalendarService {
         }
 
         try {
-            const response = await fetch(`${BASE_URL_V1}/event-types?apiKey=${API_KEY}`);
+            const response = await fetch(`${BASE_URL}/event-types`, {
+                headers: calHeaders(API_KEY, CAL_EVENT_TYPES_VERSION),
+            });
             if (!response.ok) {
                 throw new Error(`Cal.com API error: ${response.status}`);
             }
             const data = await response.json() as any;
-            const types: any[] = data.event_types || [];
+            const types: any[] = data.data || data.event_types || [];
 
             // Cache dos IDs por slug para usar em bookings
             for (const t of types) {
@@ -108,8 +120,10 @@ export class CalendarService {
         const endTime = `${date}T23:59:59.000Z`;
 
         try {
-            const url = `${BASE_URL_V1}/slots?apiKey=${apiKey}&eventTypeId=${eventTypeId}&startTime=${startTime}&endTime=${endTime}&timeZone=America/Sao_Paulo`;
-            const response = await fetch(url);
+            const url = `${BASE_URL}/slots?eventTypeId=${eventTypeId}&start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}&timeZone=America/Sao_Paulo`;
+            const response = await fetch(url, {
+                headers: calHeaders(apiKey, CAL_SLOTS_VERSION),
+            });
 
             if (!response.ok) {
                 console.error('[CalendarService] Slots error:', response.status);
@@ -117,13 +131,15 @@ export class CalendarService {
             }
 
             const data = await response.json() as any;
-            const slots: SlotResponse = data.slots || {};
+            const slots: SlotResponse = data.data || data.slots || {};
 
             // Flatten todos os slots do dia em array de strings de hora
             const available: string[] = [];
             for (const daySlots of Object.values(slots)) {
                 for (const slot of daySlots) {
-                    const hora = new Date(slot.time).toLocaleTimeString('pt-BR', {
+                    const slotStart = (slot as any).start || (slot as any).time;
+                    if (!slotStart) continue;
+                    const hora = new Date(slotStart).toLocaleTimeString('pt-BR', {
                         hour: '2-digit',
                         minute: '2-digit',
                         timeZone: 'America/Sao_Paulo',
@@ -282,23 +298,24 @@ export class CalendarService {
 
             console.log(`[CalendarService] Criando booking: ${slug || eventTypeId} em ${params.start} para ${params.email} (key custom: ${!!params.apiKey})`);
 
+            const startUtc = new Date(params.start).toISOString();
             const body = {
                 eventTypeId,
-                start: params.start,
-                timeZone: params.timeZone || 'America/Sao_Paulo',
-                responses: {
+                start: startUtc,
+                attendee: {
                     name: params.name,
                     email: params.email,
-                    notes: params.notes,
-                    location: params.location || { optionValue: '', value: 'inPerson' },
+                    timeZone: params.timeZone || 'America/Sao_Paulo',
+                    language: 'pt',
                 },
+                bookingFieldsResponses: params.notes ? { notes: params.notes } : {},
+                ...(params.location ? { location: { type: params.location } } : {}),
                 metadata: params.metadata || {},
-                language: 'pt',
             };
 
-            const response = await fetch(`${BASE_URL_V1}/bookings?apiKey=${apiKey}`, {
+            const response = await fetch(`${BASE_URL}/bookings`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: calHeaders(apiKey, CAL_BOOKINGS_VERSION, true),
                 body: JSON.stringify(body),
             });
 
@@ -313,13 +330,14 @@ export class CalendarService {
                 };
             }
 
-            console.log('[CalendarService] ✅ Booking criado:', data.uid);
+            const booking = data.data || data;
+            console.log('[CalendarService] ✅ Booking criado:', booking.uid);
 
             return {
                 success: true,
-                bookingId: data.id,
-                calBookingUid: data.uid,
-                bookingUrl: `https://cal.com/booking/${data.uid}`,
+                bookingId: booking.id,
+                calBookingUid: booking.uid,
+                bookingUrl: `https://cal.com/booking/${booking.uid}`,
             };
 
         } catch (error: any) {
@@ -333,9 +351,9 @@ export class CalendarService {
      */
     async cancelarBooking(bookingId: number, motivo?: string): Promise<boolean> {
         try {
-            const response = await fetch(`${BASE_URL_V1}/bookings/${bookingId}?apiKey=${API_KEY}`, {
+            const response = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
+                headers: calHeaders(API_KEY, CAL_BOOKINGS_VERSION, true),
                 body: JSON.stringify({ cancellationReason: motivo || 'Cancelado pelo sistema' }),
             });
             return response.ok;

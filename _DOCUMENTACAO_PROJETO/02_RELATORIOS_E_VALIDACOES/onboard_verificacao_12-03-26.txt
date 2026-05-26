@@ -1,0 +1,11 @@
+Antes disso, tenho algumas outras questões de amarrações que quero ver contigo para fazermos, queria automatizar de alguma forma o onboard no sentido de deixar ainda mais prático e fácil minha vida e a de quem vai fazer o onboard e para a programação de modo geral. 
+Todos os planos tem um número de acessos e um número de corretores, certo? 
+Quero deixar isso como uma regra. 
+No plano Start ele terá 
+Preciso que lá tenha a opção escolher o plano primeiro e já vir configurado a quantidade de acessos (Principal, secundários, corretores) 
+Dentro disso quero que o Start tenha  1 principal + 1 secundário e os 3 corretores
+Plano PRO: Até 3 Principais (Admin) + 4 Secundários + 8 Corretores
+Plano Enterprise: Ilimitado. 
+
+
+
