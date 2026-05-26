@@ -397,7 +397,10 @@ app.get('/api/imoveis', async (req, res) => {
             if (cliente) query = query.eq('cliente_id', cliente.id);
         }
 
-        query = query.order('destaque', { ascending: false }).order('created_at', { ascending: false });
+        query = query
+            .order('is_launch', { ascending: false })
+            .order('destaque', { ascending: false })
+            .order('created_at', { ascending: false });
         if (limit) {
             query = query.limit(Number(limit));
         } else {
@@ -422,7 +425,10 @@ app.get('/api/imoveis/destaque', async (req, res) => {
             if (cliente) query = query.eq('cliente_id', cliente.id);
         }
 
-        query = query.order('created_at', { ascending: false }).limit(Number(limit) || 3);
+        query = query
+            .order('is_launch', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(Number(limit) || 3);
         const { data, error } = await query;
         if (error) throw error;
         res.json({ success: true, data });
