@@ -4,11 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL || 'https://rbhkwmesmvytqdfuwcie.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-// Client principal (anon) - RLS desabilitado, funciona para tudo
+// Client principal do backend. Em servidor, preferimos service role para evitar
+// leituras inconsistentes quando RLS/policies evoluirem.
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Alias para compatibilidade - usa a mesma instância anon (RLS está desabilitado)
-// Se no futuro ativar RLS, substituir pela service_role key completa
+// Alias para compatibilidade.
 export const supabaseAdmin = supabase;
