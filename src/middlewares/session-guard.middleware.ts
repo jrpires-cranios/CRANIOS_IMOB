@@ -13,6 +13,8 @@ export const sessionGuard = async (req: Request, res: Response, next: NextFuncti
             '/webhooks',
             '/imoveis',
             '/health',
+            '/chat',
+            '/ai-search/chat',
             '/auth',
             '/tickets',
             '/sales/landing-lead',
