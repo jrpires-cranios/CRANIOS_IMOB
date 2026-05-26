@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from "react";
 
+const apiBase = import.meta.env.VITE_API_URL || '/api';
+
 // ─── THEME ───────────────────────────────────────────────────
 const T = {
   bg: "#060A14", surface: "#0C1220", card: "#111827",
@@ -223,7 +225,7 @@ export default function OnboardingWizard() {
     }
 
     try {
-      const response = await fetch('http://localhost:3005/api/onboarding/submit', {
+      const response = await fetch(`${apiBase}/onboarding/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

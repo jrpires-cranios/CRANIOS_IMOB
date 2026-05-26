@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Corretor - Crânios IMOB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #ec4899;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--surface-light);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--surface-light);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .leads-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .lead-card {
+            background: var(--surface);
+            border: 1px solid var(--surface-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .lead-card:hover {
+            border-color: var(--primary);
+        }
+
+        .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .lead-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lead-title i {
+            color: var(--accent);
+        }
+
+        .lead-contact {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.secondary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        /* Modal / Drawer para o Briefing */
+        #briefing-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: flex-end;
+        }
+
+        .briefing-drawer {
+            width: 100%;
+            max-width: 600px;
+            background: var(--surface);
+            height: 100%;
+            overflow-y: auto;
+            border-left: 1px solid var(--surface-light);
+            padding: 2rem;
+            animation: slideIn 0.3s ease-out;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .briefing-drawer h1,
+        .briefing-drawer h2,
+        .briefing-drawer h3 {
+            color: var(--text);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .briefing-drawer ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Portal do Corretor</div>
+        <button class="logout-btn" onclick="logout()"><i class="ri-logout-box-r-line"></i> Sair</button>
+    </header>
+
+    <div class="container">
+        <!-- Profiler -->
+        <div class="profile-card">
+            <img id="c-avatar" src="" alt="Avatar" class="avatar">
+            <div>
+                <h2 id="c-nome">Carregando...</h2>
+                <p style="color: var(--success); font-size: 0.9rem; margin-top: 0.2rem;"><i
+                        class="ri-checkbox-circle-fill"></i> Ativo na Roleta e Recebendo Leads</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total de Leads</div>
+                <div class="stat-value" id="s-total">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Novos hoje</div>
+                <div class="stat-value" id="s-hoje">0</div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 1rem;">Meus Leads (Agendados)</h3>
+        <div class="leads-list" id="leads-container">
+            <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Buscando leads...</p>
+        </div>
+    </div>
+
+    <!-- Briefing Modal -->
+    <div id="briefing-modal">
+        <div class="briefing-drawer">
+            <button class="close-btn" onclick="fecharBriefing()"><i class="ri-close-line"></i></button>
+            <h2 style="margin-top: 0; color: var(--primary);">Briefing da Inteligência Artificial</h2>
+            <div id="briefing-content" style="margin-top: 2rem;">
+                <!-- Markdown Renderizado entra aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth Check
+        const authData = localStorage.getItem('corretorAuth');
+        if (!authData) {
+            window.location.href = '/corretor-login.html';
+        }
+
+        const corretor = JSON.parse(authData);
+
+        function logout() {
+            localStorage.removeItem('corretorAuth');
+            window.location.href = '/corretor-login.html';
+        }
+
+        // Init UI
+        document.getElementById('c-nome').textContent = 'Olá, ' + corretor.nome;
+        document.getElementById('c-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=${corretor.nome}`;
+
+        async function loadLeads() {
+            try {
+                const response = await fetch(`/api/corretores/${corretor.id}/leads`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const leads = data.leads;
+                    document.getElementById('s-total').textContent = leads.length;
+
+                    // Conta leads de hoje
+                    const hoje = new Date().toISOString().split('T')[0];
+                    const leadsHoje = leads.filter(l => l.created_at && l.created_at.startsWith(hoje)).length;
+                    document.getElementById('s-hoje').textContent = leadsHoje;
+
+                    const container = document.getElementById('leads-container');
+                    container.innerHTML = '';
+
+                    if (leads.length === 0) {
+                        container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 2rem;">Você ainda não recebeu nenhum lead.</p>';
+                        return;
+                    }
+
+                    leads.forEach(lead => {
+                        const dateObj = new Date(lead.created_at);
+                        const formatado = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+                        // Verifica se tem briefing (notas_sdr com a estrutura ou markdown)
+                        const temBriefing = !!lead.notas_sdr;
+
+                        const html = `
+                            <div class="lead-card">
+                                <div class="lead-header">
+                                    <div>
+                                        <div class="lead-title"><i class="ri-user-star-line"></i> ${lead.nome || 'Lead sem nome'} <span style="font-size: 0.75rem; color: var(--success); font-weight: normal; background: rgba(16,185,129,0.1); padding: 0.2rem 0.5rem; border-radius: 1rem;">Quente</span></div>
+                                        <div class="lead-contact">
+                                            <span><i class="ri-whatsapp-line"></i> ${lead.telefone || 'N/I'}</span>
+                                            <span><i class="ri-calendar-event-line"></i> Captado em: ${formatado}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
+                                    <a href="https://wa.me/${(lead.telefone || '').replace(/\D/g, '')}" target="_blank" style="text-decoration:none;">
+                                        <button class="action-btn"><i class="ri-whatsapp-fill"></i> Falar no WhatsApp</button>
+                                    </a>
+                                    ${temBriefing ? `<button class="action-btn secondary" onclick='abrirBriefing(${JSON.stringify(lead.notas_sdr).replace(/'/g, "&#39;")})'><i class="ri-robot-2-line"></i> Ler Briefing (IA)</button>` : '<span style="font-size: 0.8rem; color: var(--text-muted);">Sem briefing</span>'}
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += html;
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('leads-container').innerHTML = '<p style="color:red; text-align:center;">Erro ao carregar leads.</p>';
+            }
+        }
+
+        // Drawer
+        function abrirBriefing(markdownText) {
+            document.getElementById('briefing-modal').style.display = 'flex';
+            if (typeof markdownText === 'object') {
+                // Se for objeto JSON salvo (o leadBriefingService às vezes salva objeto)
+                let text = '';
+                for (let key in markdownText) {
+                    text += `### ${key.toUpperCase()}\n\n${markdownText[key]}\n\n`;
+                }
+                document.getElementById('briefing-content').innerHTML = marked.parse(text);
+            } else {
+                // Se for string markdown
+                document.getElementById('briefing-content').innerHTML = marked.parse(markdownText || 'Nenhum dado.');
+            }
+        }
+
+        function fecharBriefing() {
+            document.getElementById('briefing-modal').style.display = 'none';
+        }
+
+        loadLeads();
+    </script>
+</body>
+
+</html>

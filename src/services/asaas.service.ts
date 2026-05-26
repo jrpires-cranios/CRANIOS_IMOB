@@ -41,7 +41,7 @@ export class AsaasService {
         this.isProduction = process.env.NODE_ENV === 'production';
         const apiKey = this.isProduction
             ? (process.env.ASAAS_API_KEY || '')
-            : (process.env.ASAAS_SANDBOX || '');
+            : ((process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX) || '');
 
         const baseURL = this.isProduction
             ? 'https://www.asaas.com/api/v3'

@@ -27,7 +27,7 @@ class ApiClient {
 
   constructor(config?: Partial<ApiConfig>) {
     this.config = {
-      baseUrl: config?.baseUrl || 'http://localhost:3005/api',
+      baseUrl: config?.baseUrl || '/api',
       timeout: config?.timeout || 10000,
     };
   }

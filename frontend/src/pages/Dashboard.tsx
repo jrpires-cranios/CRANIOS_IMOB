@@ -4,6 +4,9 @@ import { apiClient } from "../client";
 import ExecutiveBI from "./ExecutiveBI";
 import Franquias from "./Franquias";
 import ImovelUpload from "./ImovelUpload";
+
+const apiBase = import.meta.env.VITE_API_URL || '/api';
+
 const theme = {
     bg: "#0A1628", bgSurface: "#0F2240", bgCard: "#142952", bgElevated: "#1A3468",
     accent: "#3B82F6", accentHover: "#2563EB", success: "#10B981", warning: "#F59E0B",
@@ -327,7 +330,7 @@ export default function Dashboard({ onGoHome }: DashboardProps) {
         try {
             const tenantId = localStorage.getItem('tenant_id') || 'tenant-demo';
             const email = localStorage.getItem('user_email') || 'gestor@demo.com';
-            const res = await fetch('http://localhost:3005/api/tickets', {
+            const res = await fetch(`${apiBase}/tickets`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -62,7 +62,7 @@ export async function resolveLeaseParams(propertyId: string) {
 // =======================================================
 async function createAsaasCustomer(nome: string, email: string, cpf?: string, telefone?: string) {
     const isProduction = process.env.NODE_ENV === 'production';
-    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : process.env.ASAAS_SANDBOX;
+    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : (process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX);
     const asaasBase = isProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     if (!asaasKey) {
         console.log('[Asaas (Simulado)] Cliente criado:', email);
@@ -90,7 +90,7 @@ async function createAsaasCustomer(nome: string, email: string, cpf?: string, te
 // =======================================================
 async function createCaucaoCharge(customerId: string, value: number, billingType: string = 'PIX') {
     const isProduction = process.env.NODE_ENV === 'production';
-    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : process.env.ASAAS_SANDBOX;
+    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : (process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX);
     const asaasBase = isProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     if (!asaasKey) {
         console.log(`[Asaas (Simulado)] Cobrança de caução R$ ${value} gerada.`);
@@ -128,7 +128,7 @@ async function createLeaseRecurringSubscription(
     startDate: string
 ) {
     const isProduction = process.env.NODE_ENV === 'production';
-    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : process.env.ASAAS_SANDBOX;
+    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : (process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX);
     const asaasBase = isProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     if (!asaasKey) {
         console.log(`[Asaas (Simulado)] Assinatura de ${durationMonths} meses criada. Valor: R$ ${monthlyRent}/mês.`);

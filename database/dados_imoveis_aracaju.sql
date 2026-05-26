@@ -106,7 +106,7 @@ INSERT INTO imoveis (tipo, finalidade, titulo, descricao, endereco, bairro, cida
  'Rua Paulo Cesar Santos, 178', 'Jardim Centenário', 'Aracaju', 'SE', '49066-490',
  2800.00, 150.00, 120.00, 3, 0, 2, 2,
  '["quintal", "garagem_coberta", "area_gourmet"]',
- 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800', true, false),
+ 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800', true, false);
 
 -- ========================================
 -- APARTAMENTOS PARA VENDA
@@ -205,7 +205,7 @@ INSERT INTO imoveis (tipo, finalidade, titulo, descricao, endereco, bairro, cida
  'Rodovia José Sarney - Cond. Ravines', 'Aruana', 'Aracaju', 'SE', '49040-000',
  2300000.00, 550.00, 450.00, 5, 5, 6, 5,
  '["condominio_fechado", "piscina", "sauna", "churrasqueira", "area_gourmet", "escritorio", "closet", "jardim", "portaria_24h", "hidromassagem"]',
- 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800', true, true),
+ 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800', true, true);
 
 -- ========================================
 -- IMÓVEIS PARA VENDA E LOCAÇÃO (AMBOS)

@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3002;
 
 // Supabase
 const supabaseUrl = process.env.SUPABASE_URL || 'https://rbhkwmesmvytqdfuwcie.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiaGt3bWVzbXZ5dHFkZnV3Y2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MTQ0ODUsImV4cCI6MjA4NTM5MDQ4NX0.vHffPyFGC99OhYpfeGihf59oGhIguVwKfQagySAyTck';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '');
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Middleware

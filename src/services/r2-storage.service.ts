@@ -11,7 +11,7 @@ export class R2StorageService {
         const accessKeyId = process.env.R2_ACCESS_KEY_ID || '';
         const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || '';
         this.bucketName = bucketNameOverride || process.env.R2_BUCKET_NAME || 'cranios-imob';
-        this.publicDomain = process.env.R2_PUBLIC_DOMAIN || `https://pub-${accountId}.r2.dev`;
+        this.publicDomain = process.env.R2_PUBLIC_DOMAIN || process.env.R2_PUBLIC_URL || `https://pub-${accountId}.r2.dev`;
 
         // Cloudflare R2 usa S3-compatible API
         this.client = new S3Client({

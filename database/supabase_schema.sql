@@ -235,7 +235,7 @@ INSERT INTO imoveis (tipo, finalidade, titulo, descricao, endereco, bairro, cida
  'Rua João Pessoa, 789', 'Luzia', 'Aracaju', 'SE', '49045-410',
  580000.00, 280.00, 200.00, 4, 2, 3, 2,
  '["quintal", "garagem_coberta", "proximo_shopping", "area_servico"]',
- 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800', true, false),
+ 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800', true, false);
 
 -- APARTAMENTOS PARA LOCAÇÃO
 
@@ -287,7 +287,7 @@ INSERT INTO imoveis (tipo, finalidade, titulo, descricao, endereco, bairro, cida
  'Rua Estância, 890', 'Jardins', 'Aracaju', 'SE', '49026-420',
  4200.00, 120.00, 115.00, 3, 1, 3, 2,
  '["dependencia_completa", "proximo_shopping", "piscina", "academia", "salao_festas"]',
- 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', true),
+ 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', true);
 
 -- CASAS PARA LOCAÇÃO
 
@@ -317,7 +317,7 @@ INSERT INTO imoveis (tipo, finalidade, titulo, descricao, endereco, bairro, cida
  'Condomínio Ville de France, Rua das Acácias, 89', 'Jabotiana', 'Aracaju', 'SE', '49098-150',
  4500.00, 280.00, 210.00, 4, 2, 3, 3,
  '["condominio_fechado", "quintal", "varanda", "piscina", "portaria_24h", "churrasqueira"]',
- 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800', true),
+ 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800', true);
 
 -- IMÓVEIS PARA VENDA E LOCAÇÃO
 

@@ -39,7 +39,7 @@ describe('FinanciamentoAgent — Cálculos SAC/Price', () => {
     const amortizacao = principal / prazoMeses;
     const primeiraParcela = amortizacao + principal * taxaAoMes;
 
-    expect(primeiraParcela).toBeCloseTo(3066.67, 0);
+    expect(primeiraParcela).toBeCloseTo(3233.33, 0);
     expect(amortizacao).toBeCloseTo(833.33, 0);
   });
 
@@ -51,15 +51,15 @@ describe('FinanciamentoAgent — Cálculos SAC/Price', () => {
     const fator = Math.pow(1 + taxa, n);
     const pmt = principal * (taxa * fator) / (fator - 1);
 
-    expect(pmt).toBeCloseTo(2199.91, 0);
+    expect(pmt).toBeCloseTo(2544.48, 0);
     expect(pmt).toBeGreaterThan(0);
   });
 
   it('deve calcular renda mínima necessária (PMT / 0.35)', () => {
-    const pmt = 2199.91;
+    const pmt = 2544.48;
     const rendaMinima = pmt / 0.35;
 
-    expect(rendaMinima).toBeCloseTo(6285.46, 0);
+    expect(rendaMinima).toBeCloseTo(7269.94, 0);
     expect(rendaMinima).toBeGreaterThan(pmt);
   });
 

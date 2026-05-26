@@ -458,7 +458,7 @@ export default function CRMKanban() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [draggingLead, setDraggingLead] = useState<Lead | null>(null);
+  const [, setDraggingLead] = useState<Lead | null>(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');

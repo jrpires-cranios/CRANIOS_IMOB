@@ -1,0 +1,23 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+frontend/node_modules
+scripts/node_modules
+dist
+frontend/dist
+coverage
+frontend/coverage
+*.log
+*.tmp
+tmp_docx
+Base para claude
+quickwins_unzipped
+O projeto
+Info-Extras
+Cecília-Dify-Cranios-Imob
+Pinecone_rag_base
+*.docx
+*.pdf

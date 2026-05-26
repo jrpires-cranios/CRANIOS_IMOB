@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Corretor - Crânios IMOB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--surface-light);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--surface-light);
+            color: white;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .input-group input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .success {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="logo">Completar Cadastro</div>
+        <p style="color: var(--text-muted); text-align: center; margin-bottom: 2rem; font-size: 0.9rem;">Configure sua
+            conta para receber leads em sua própria agenda do Cal.com.</p>
+
+        <form id="cadastroForm" onsubmit="event.preventDefault(); fazCadastro();">
+            <div class="input-group">
+                <label>Nome Completo</label>
+                <input type="text" id="nome" required disabled>
+            </div>
+            <div class="input-group">
+                <label>Email de Acesso</label>
+                <input type="email" id="email" required disabled>
+            </div>
+            <div class="input-group">
+                <label>Telefone / WhatsApp</label>
+                <input type="text" id="telefone" placeholder="(11) 99999-9999" required>
+            </div>
+            <div class="input-group" style="margin-top: 1.5rem;">
+                <label>
+                    <span style="color: white; font-weight: 500;">Cal.com - API Key</span>
+                    <a href="https://app.cal.com/settings/developer/api-keys" target="_blank"
+                        style="color: var(--primary); text-decoration: none; font-size: 0.8rem;">Pegar Key <i
+                            class="ri-external-link-line"></i></a>
+                </label>
+                <input type="text" id="api_key" placeholder="cal_live_..." required>
+            </div>
+            <div class="input-group">
+                <label>
+                    <span style="color: white; font-weight: 500;">Cal.com - Event Type ID</span>
+                </label>
+                <input type="number" id="event_id" placeholder="Ex: 4812153" required>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">ID numérico do evento do
+                    Cal.com (encontrado na URL ao editar o evento do tipo "Visita de Imóvel").</p>
+            </div>
+
+            <button type="submit" id="submitBtn">Finalizar Cadastro <i class="ri-check-line"></i></button>
+            <div id="errorMsg" class="error"></div>
+            <div id="successMsg" class="success">Cadastro concluído! Configurando seu acesso...</div>
+        </form>
+
+        <!-- Seção Telegram (oculta por padrão) -->
+        <div id="telegramSection" style="display: none; text-align: center; margin-top: 1rem;">
+            <h3 style="color: #10b981; margin-bottom: 0.5rem;"><i class="ri-checkbox-circle-fill"></i> Cadastro
+                Finalizado!</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Falta apenas um último passo: conectar o seu Telegram para começar a receber os leads da inteligência em
+                tempo real.
+            </p>
+
+            <div
+                style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--surface-light); margin-bottom: 1.5rem;">
+                <img id="tgQrCode" src="" alt="QR Code Telegram"
+                    style="width: 180px; height: 180px; border-radius: 0.5rem; display: block; margin: 0 auto; margin-bottom: 1rem;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Aponte a câmera do celular
+                    ou clique no botão abaixo e inicie o Bot.</p>
+                <a id="tgLinkBtn" href="#" target="_blank"
+                    style="display: inline-block; background: #229ED9; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; width: 100%;">
+                    <i class="ri-telegram-fill"></i> Conectar Telegram
+                </a>
+            </div>
+
+            <button onclick="window.location.href='/corretor-login.html'"
+                style="background: var(--surface-light); color: white; margin-top: 0;">
+                Já conectei, ir para Login <i class="ri-arrow-right-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        const nomeParam = urlParams.get('nome');
+        const clienteIdParam = urlParams.get('cliente_id');
+
+        if (emailParam) document.getElementById('email').value = emailParam;
+        if (nomeParam) document.getElementById('nome').value = nomeParam;
+
+        // Liberar o nome se não vier preenchido
+        if (!nomeParam) {
+            document.getElementById('nome').disabled = false;
+        }
+
+        async function fazCadastro() {
+            const btn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = 'Salvando...';
+
+            const payload = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value,
+                calcom_api_key: document.getElementById('api_key').value,
+                calcom_event_type_id: parseInt(document.getElementById('event_id').value, 10),
+                cliente_id: (clienteIdParam === 'null' || !clienteIdParam) ? null : clienteIdParam
+            };
+
+            let executouSucesso = false;
+
+            try {
+                const response = await fetch('/api/corretores', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    executouSucesso = true;
+
+                    // Esconde o form e mostra o Telegram
+                    document.getElementById('cadastroForm').style.display = 'none';
+                    document.querySelector('.logo').textContent = 'Conecte seu Telegram';
+                    document.querySelector('.login-card p').style.display = 'none';
+
+                    const tgSection = document.getElementById('telegramSection');
+                    tgSection.style.display = 'block';
+
+                    if (data.telegramActivation) {
+                        document.getElementById('tgQrCode').src = data.telegramActivation.qrCodeDataUrl;
+                        document.getElementById('tgLinkBtn').href = data.telegramActivation.link;
+                    }
+
+                } else {
+                    errorMsg.textContent = data.error || 'Erro ao realizar cadastro';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Erro de conexão com servidor';
+                errorMsg.style.display = 'block';
+            } finally {
+                if (!executouSucesso) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Finalizar Cadastro <i class="ri-check-line"></i>';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

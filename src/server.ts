@@ -73,12 +73,17 @@ process.on('uncaughtException', (err) => { console.error('UNCAUGHT EXCEPTION:', 
 process.on('unhandledRejection', (reason) => { console.error('UNHANDLED REJECTION:', reason); });
 
 const app = express();
-const PORT = process.env.PORT || 3005;
+const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || '0.0.0.0';
+const corsOrigins = (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
 
 // ========== MIDDLEWARE ==========
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({
-    origin: '*',
+    origin: corsOrigins.length ? corsOrigins : true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 }));
@@ -138,6 +143,17 @@ app.get('/health', (req, res) => {
             webhook_forwarding: !!process.env.CRM_WEBHOOK_URL,
             telegram_bot: !!process.env.TELEGRAM_BOT_TOKEN,
         }
+    });
+});
+
+app.get('/api/health', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Crânios IMOB API is running (Brain v3.0)',
+        timestamp: new Date().toISOString(),
+        version: '3.0.0-FULL',
+        env: process.env.NODE_ENV || 'production',
+        uptime: process.uptime(),
     });
 });
 
@@ -397,23 +413,23 @@ app.get('/api/imoveis/destaque', async (req, res) => {
     }
 });
 
-app.get('/api/imoveis/:id', async (req, res) => {
-    try {
-        const { data, error } = await supabase.from('imoveis').select('*').eq('id', req.params.id).single();
-        if (error) throw error;
-        if (!data) return res.status(404).json({ success: false, error: 'Imóvel não encontrado' });
-        res.json({ success: true, data });
-    } catch (e: any) {
-        res.status(500).json({ success: false, error: e.message });
-    }
-});
-
 app.get('/api/imoveis/search', async (req, res) => {
     try {
         const { q } = req.query as any;
         if (!q) return res.status(400).json({ success: false, error: 'Query obrigatória' });
         const { data, error } = await supabase.from('imoveis').select('*').eq('disponivel', true).textSearch('descricao', q).limit(10);
         if (error) throw error;
+        res.json({ success: true, data });
+    } catch (e: any) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+app.get('/api/imoveis/:id', async (req, res) => {
+    try {
+        const { data, error } = await supabase.from('imoveis').select('*').eq('id', req.params.id).single();
+        if (error) throw error;
+        if (!data) return res.status(404).json({ success: false, error: 'Imóvel não encontrado' });
         res.json({ success: true, data });
     } catch (e: any) {
         res.status(500).json({ success: false, error: e.message });
@@ -2714,20 +2730,29 @@ app.post('/api/sales/checkout', async (req, res) => {
     }
 });
 
-app.use('*', (req, res) => {
-    res.status(404).json({ success: false, error: `Route not found: ${req.method} ${req.originalUrl} ` });
+app.use((req, res) => {
+    if (req.path.startsWith('/api')) {
+        return res.status(404).json({ success: false, error: `Route not found: ${req.method} ${req.originalUrl} ` });
+    }
+
+    return res.sendFile(path.join(process.cwd(), 'public', 'index.html'), (err) => {
+        if (err) {
+            res.status(404).json({ success: false, error: `Route not found: ${req.method} ${req.originalUrl} ` });
+        }
+    });
 });
 
 
 
 // ========== START ==========
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
     console.log(`
   🚀 CRÂNIOS IMOB BRAIN v3.0 ATIVADO
+  📡 Host: ${HOST}
   📡 Porta: ${PORT}
   📧 Email(Resend): ${process.env.RESEND_API_KEY ? '✅ Ativo' : '❌ Sem chave'}
-  📅 Cal.com: ${process.env.CALCOM_API_KEY ? '✅ Ativo' : '⚠️  Usando hardcoded key'}
+  📅 Cal.com: ${process.env.CALCOM_API_KEY ? '✅ Ativo' : '⚠️  Desativado / slots simulados'}
   🧠 Pinecone RAG: ${process.env.PINECONE_API_KEY ? '✅ Ativo' : '❌ Sem chave'}
   🗄️  R2 Storage: ${process.env.R2_ACCESS_KEY_ID ? '✅ Ativo' : '❌ Sem credenciais'}
   🔗 CRM Webhook: ${process.env.CRM_WEBHOOK_URL ? '✅ Configurado' : '⚠️  Desativado'}

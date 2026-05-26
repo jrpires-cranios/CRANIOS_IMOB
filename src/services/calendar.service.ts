@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const API_KEY = process.env.CALCOM_API_KEY || 'cal_live_49029f278bf940b70b1586696eae8fb5';
+const API_KEY = process.env.CALCOM_API_KEY || '';
 const BASE_URL = 'https://api.cal.com/v2';
 const BASE_URL_V1 = 'https://api.cal.com/v1';
 
@@ -44,6 +44,11 @@ export class CalendarService {
      * Lista os tipos de evento disponíveis e faz cache dos IDs
      */
     async listEventTypes(): Promise<Array<{ id: number; slug: string; title: string; length: number }>> {
+        if (!API_KEY) {
+            console.warn('[CalendarService] CALCOM_API_KEY não configurada. Agenda usará horários simulados.');
+            return [];
+        }
+
         try {
             const response = await fetch(`${BASE_URL_V1}/event-types?apiKey=${API_KEY}`);
             if (!response.ok) {
@@ -88,6 +93,11 @@ export class CalendarService {
         const slug = CAL_EVENT_SLUGS[slugOrType as CalEventType] || slugOrType;
         const eventTypeId = eventTypeIdOverride || await this.getEventTypeId(slug);
         const apiKey = apiKeyOverride || API_KEY;
+
+        if (!apiKey) {
+            console.warn('[CalendarService] API key ausente. Retornando slots simulados.');
+            return this.mockSlots(date);
+        }
 
         if (!eventTypeId) {
             console.warn('[CalendarService] Event type não encontrado para slug:', slug);
@@ -262,6 +272,10 @@ export class CalendarService {
             const eventTypeId = params.eventTypeId || (slug ? await this.getEventTypeId(slug) : null);
             const apiKey = params.apiKey || API_KEY;
 
+            if (!apiKey) {
+                return { success: false, error: 'CALCOM_API_KEY não configurada' };
+            }
+
             if (!eventTypeId) {
                 return { success: false, error: `Tipo de evento não encontrado: ${slug}` };
             }
@@ -342,6 +356,8 @@ export class CalendarService {
 export const calendarService = new CalendarService();
 
 // Inicializar e fazer cache dos event types ao iniciar o servidor
-calendarService.listEventTypes().catch(err => {
-    console.warn('[CalendarService] Não foi possível carregar event types na inicialização:', err.message);
-});
+if (API_KEY) {
+    calendarService.listEventTypes().catch(err => {
+        console.warn('[CalendarService] Não foi possível carregar event types na inicialização:', err.message);
+    });
+}

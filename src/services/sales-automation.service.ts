@@ -107,7 +107,7 @@ export const salesAutomationService = {
 
     // Criar customer no Asaas
     const _asaasProduction = process.env.NODE_ENV === 'production';
-    const _asaasKey = _asaasProduction ? process.env.ASAAS_API_KEY! : (process.env.ASAAS_SANDBOX || process.env.ASAAS_API_KEY!);
+    const _asaasKey = _asaasProduction ? process.env.ASAAS_API_KEY! : ((process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX) || process.env.ASAAS_API_KEY!);
     const _asaasBase = _asaasProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     const asaasHeaders = {
       'access_token': _asaasKey,

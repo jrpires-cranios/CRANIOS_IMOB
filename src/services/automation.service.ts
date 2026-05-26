@@ -73,7 +73,7 @@ export async function createProvisionalLogin(email: string, name: string) {
 // 2. ASSINATURA RECORRENTE ASAAS (12 meses)
 export async function createRecurringSubscription(customerId: string, value: number, billingType: string) {
     const isProduction = process.env.NODE_ENV === 'production';
-    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : process.env.ASAAS_SANDBOX;
+    const asaasKey = isProduction ? process.env.ASAAS_API_KEY : (process.env.ASAAS_SANDBOX || process.env.ASAAS_SANBOX);
     const asaasBase = isProduction ? 'https://www.asaas.com/api/v3' : 'https://sandbox.asaas.com/api/v3';
     if (!asaasKey) return 'simulated_sub_id_1234';
 

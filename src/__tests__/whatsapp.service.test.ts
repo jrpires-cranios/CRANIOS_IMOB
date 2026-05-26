@@ -5,7 +5,7 @@ describe('WhatsApp Service — Validações', () => {
     const normalizar = (tel: string) => tel.replace(/\D/g, '');
 
     expect(normalizar('+55 (79) 99999-9999')).toBe('5579999999999');
-    expect(normalizar('79 99999-9999')).toBe('7999999999');
+    expect(normalizar('79 99999-9999')).toBe('79999999999');
     expect(normalizar('5579999999999')).toBe('5579999999999');
   });
 

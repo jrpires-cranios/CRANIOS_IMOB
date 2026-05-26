@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const apiBase = import.meta.env.VITE_API_URL || '/api';
+
 interface LoginModalProps {
     onSuccess: (email: string) => void;
     onClose: () => void;
@@ -17,7 +19,7 @@ export default function LoginModal({ onSuccess, onClose, target }: LoginModalPro
 
         try {
             // Solicitar token de Sessão Única via Backend
-            const response = await fetch('http://localhost:3005/api/auth/demo-login', {
+            const response = await fetch(`${apiBase}/auth/demo-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

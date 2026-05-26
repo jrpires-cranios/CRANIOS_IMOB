@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const apiBase = import.meta.env.VITE_API_URL || '/api';
+
 export default function SecureKeysForm() {
     const [token, setToken] = useState<string | null>(null);
     const [keys, setKeys] = useState<Record<string, string>>({
@@ -27,7 +29,7 @@ export default function SecureKeysForm() {
         setStatus('loading');
         try {
             // Simulação de envio das chaves ultra-seguras (Cofre AES)
-            const res = await fetch('http://localhost:3005/api/onboarding/secure-keys', {
+            const res = await fetch(`${apiBase}/onboarding/secure-keys`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
