@@ -6,6 +6,8 @@ interface PropertyCardProps {
   onClick?: () => void;
 }
 
+const PROPERTY_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&auto=format&fit=crop';
+
 type FeatureIconName = 'bed' | 'bath' | 'parking' | 'area' | 'location' | 'pool' | 'gym' | 'office' | 'gourmet' | 'leisure';
 
 function FeatureIcon({ name, className = 'w-5 h-5' }: { name: FeatureIconName; className?: string }) {
@@ -48,9 +50,14 @@ function FeatureIcon({ name, className = 'w-5 h-5' }: { name: FeatureIconName; c
   if (name === 'parking') {
     return (
       <svg {...common}>
-        <path d="M5 19V8.2A3.2 3.2 0 0 1 8.2 5h5.05a4.15 4.15 0 0 1 0 8.3H9.2" />
-        <path d="M9.2 19V5" />
-        <path d="M9.2 9.15h3.7a1.05 1.05 0 1 1 0 2.1H9.2" />
+        <path d="M6.4 11.6 8 7.55A2.4 2.4 0 0 1 10.25 6h3.5A2.4 2.4 0 0 1 16 7.55l1.6 4.05" />
+        <path d="M5.7 11.6h12.6A1.7 1.7 0 0 1 20 13.3v3.2a1 1 0 0 1-1 1h-1.3" />
+        <path d="M6.3 17.5H5a1 1 0 0 1-1-1v-3.2A1.7 1.7 0 0 1 5.7 11.6" />
+        <path d="M9.25 9.1h5.5" />
+        <path d="M7.1 14.15h1.6" />
+        <path d="M15.3 14.15h1.6" />
+        <circle cx="8.1" cy="17.5" r="1.35" />
+        <circle cx="15.9" cy="17.5" r="1.35" />
       </svg>
     );
   }
@@ -183,7 +190,7 @@ export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
   const [loading, setLoading] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const amenityHighlights = getAmenityHighlights(imovel.caracteristicas);
-  const mainImage = !imageFailed ? imovel.foto_principal || imovel.fotos?.[0] : '';
+  const mainImage = !imageFailed ? imovel.foto_principal || imovel.fotos?.[0] || PROPERTY_IMAGE_FALLBACK : PROPERTY_IMAGE_FALLBACK;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-gray-200" id={`imovel-${imovel.id}`}>

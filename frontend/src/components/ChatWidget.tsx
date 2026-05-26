@@ -60,18 +60,21 @@ export default function ChatWidget({ onSearchFromChat }: ChatWidgetProps = {}) {
         setIsTyping(true);
 
         try {
-            // Updated to point to new AI Search Chat controller
-            const response = await fetch('/api/ai-search/chat', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
+                    message: userMsg.content,
                     sessionId: sessionId
                 })
             });
 
             const data = await response.json();
-            let reply = data.reply || 'Desculpe, não entendi. Pode repetir?';
+            if (!response.ok) {
+                throw new Error(data.error || 'Falha ao conversar com Elena');
+            }
+
+            let reply = data.response || data.reply || data.texto || data.message || 'Desculpe, não entendi. Pode repetir?';
 
             // Check for [BUSCAR: ...] intent
             const searchMatch = reply.match(/\[BUSCAR:(.+?)\]/);

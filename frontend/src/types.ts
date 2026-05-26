@@ -27,6 +27,11 @@ export interface Imovel {
   caracteristicas?: string[];
   fotos?: string[];
   foto_principal?: string;
+  is_launch?: boolean;
+  launch_developer?: string;
+  book_pdf_url?: string;
+  bucket_book_url?: string;
+  status?: string;
   disponivel: boolean;
   destaque: boolean;
   // Propriedades adicionais para agentes

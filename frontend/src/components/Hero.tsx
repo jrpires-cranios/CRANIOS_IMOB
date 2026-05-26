@@ -5,6 +5,8 @@ import { Imovel } from '../types';
 
 import AISearchBar from './AISearchBar';
 
+const HERO_BG_IMAGE = 'https://images.unsplash.com/photo-1600596542815-2a4d9f9313b6?q=80&w=2070&auto=format&fit=crop';
+
 interface HeroProps {
   onSelectProperty?: (imovel: Imovel) => void;
   onSearch?: (results: Imovel[], interpretation: any) => void;
@@ -12,16 +14,17 @@ interface HeroProps {
 
 export default function Hero({ onSelectProperty, onSearch }: HeroProps) {
   const [imovel, setImovel] = useState<Imovel | null>(null);
+  const [previewImageFailed, setPreviewImageFailed] = useState(false);
 
 
   useEffect(() => {
     async function loadFeaturedImovel() {
       try {
-        // Tenta buscar o destaque, se falhar ou não tiver imagem, usa fallback
-        const response = await apiClient.getImoveisDestaque(1);
+        const response = await apiClient.getImoveisDestaque(8);
 
         if (response.success && response.data && response.data.length > 0) {
-          setImovel(response.data[0]);
+          const featured = response.data.find((item) => !item.is_launch && item.foto_principal) || response.data[0];
+          setImovel(featured);
         }
       } catch (error) {
         console.error('[Hero] Erro:', error);
@@ -31,8 +34,8 @@ export default function Hero({ onSelectProperty, onSearch }: HeroProps) {
     loadFeaturedImovel();
   }, []);
 
-  // Fallback image if no featured property or if featured property has no image
-  const bgImage = imovel?.foto_principal || 'https://images.unsplash.com/photo-1600596542815-2a4d9f9313b6?q=80&w=2070&auto=format&fit=crop';
+  const bgImage = HERO_BG_IMAGE;
+  const previewImage = !previewImageFailed ? imovel?.foto_principal || HERO_BG_IMAGE : HERO_BG_IMAGE;
 
   return (
     <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-gray-900">
@@ -100,7 +103,12 @@ export default function Hero({ onSelectProperty, onSearch }: HeroProps) {
             onClick={() => onSelectProperty?.(imovel)}>
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-xl overflow-hidden active:scale-95 transition">
-                <img src={imovel.foto_principal || bgImage} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="" />
+                <img
+                  src={previewImage}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                  alt=""
+                  onError={() => setPreviewImageFailed(true)}
+                />
               </div>
               <div>
                 <p className="text-xs font-bold text-blue-600 uppercase mb-1">Destaque</p>
