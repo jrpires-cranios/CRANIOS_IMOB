@@ -211,7 +211,7 @@ export class ChatAgent {
         console.warn('[ChatAgent] Erro ao buscar lançamentos:', e.message);
         contextoRAG += `\n[LANÇAMENTOS] Não foi possível carregar os materiais agora. Peça ao cliente um contato para enviar depois.\n`;
       }
-    } else if (!ehLancamento && !ehPedidoAgendamento) {
+    } else if (ehBusca) {
       agenteKey = 'RICARDO';
 
       // Extrair filtros
