@@ -181,17 +181,20 @@ function getAmenityHighlights(items?: string[] | string | null) {
 
 export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
   const [loading, setLoading] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const amenityHighlights = getAmenityHighlights(imovel.caracteristicas);
+  const mainImage = !imageFailed ? imovel.foto_principal || imovel.fotos?.[0] : '';
 
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-gray-200" id={`imovel-${imovel.id}`}>
       {/* Image */}
       <div className="relative h-64 bg-gray-200">
-        {imovel.foto_principal ? (
+        {mainImage ? (
           <img
-            src={imovel.foto_principal}
+            src={mainImage}
             alt={imovel.titulo}
             className="w-full h-full object-cover"
+            onError={() => setImageFailed(true)}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
@@ -276,16 +279,16 @@ export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
 
         {/* Features */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          {imovel.quartos !== undefined && (
+          {imovel.quartos != null && imovel.quartos > 0 && (
             <FeaturePill icon="bed" label={`${imovel.quartos} quartos`} />
           )}
-          {imovel.banheiros !== undefined && (
+          {imovel.banheiros != null && imovel.banheiros > 0 && (
             <FeaturePill icon="bath" label={`${imovel.banheiros} banheiros`} />
           )}
-          {imovel.vagas_garagem !== undefined && imovel.vagas_garagem > 0 && (
+          {imovel.vagas_garagem != null && imovel.vagas_garagem > 0 && (
             <FeaturePill icon="parking" label={`${imovel.vagas_garagem} vagas`} />
           )}
-          {imovel.area_total !== undefined && (
+          {imovel.area_total != null && imovel.area_total > 0 && (
             <FeaturePill icon="area" label={`${imovel.area_total} m²`} />
           )}
         </div>
