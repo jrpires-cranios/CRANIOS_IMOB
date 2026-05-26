@@ -5,7 +5,7 @@ WORKDIR /app
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund && npm cache clean --force
 
 COPY tsconfig.json ./
 COPY src ./src
@@ -18,7 +18,7 @@ FROM node:20-bookworm-slim AS frontend-builder
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund && npm cache clean --force
 
 COPY frontend ./
 ARG VITE_API_URL=/api
@@ -59,7 +59,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 
 COPY --from=backend-builder /app/dist ./dist
 COPY --from=frontend-builder /app/frontend/dist ./public
