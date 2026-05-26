@@ -6,7 +6,7 @@ interface PropertyCardProps {
   onClick?: () => void;
 }
 
-type FeatureIconName = 'bed' | 'bath' | 'parking' | 'area' | 'location';
+type FeatureIconName = 'bed' | 'bath' | 'parking' | 'area' | 'location' | 'pool' | 'gym' | 'office' | 'gourmet' | 'leisure';
 
 function FeatureIcon({ name, className = 'w-5 h-5' }: { name: FeatureIconName; className?: string }) {
   const common = {
@@ -69,6 +69,64 @@ function FeatureIcon({ name, className = 'w-5 h-5' }: { name: FeatureIconName; c
     );
   }
 
+  if (name === 'pool') {
+    return (
+      <svg {...common}>
+        <path d="M5 8.5c1.15 0 1.15.8 2.3.8s1.15-.8 2.3-.8 1.15.8 2.3.8 1.15-.8 2.3-.8 1.15.8 2.3.8 1.15-.8 2.3-.8" />
+        <path d="M4 14.25c1.35 0 1.35.9 2.7.9s1.35-.9 2.7-.9 1.35.9 2.7.9 1.35-.9 2.7-.9 1.35.9 2.7.9" />
+        <path d="M4 18c1.35 0 1.35.9 2.7.9s1.35-.9 2.7-.9 1.35.9 2.7.9 1.35-.9 2.7-.9 1.35.9 2.7.9" />
+        <path d="M8 8.8V5.9A1.9 1.9 0 0 1 9.9 4h.6" />
+        <path d="M14 8.8V5.9A1.9 1.9 0 0 1 15.9 4h.6" />
+      </svg>
+    );
+  }
+
+  if (name === 'gym') {
+    return (
+      <svg {...common}>
+        <path d="M3.5 10v4" />
+        <path d="M6 8.5v7" />
+        <path d="M18 8.5v7" />
+        <path d="M20.5 10v4" />
+        <path d="M6 12h12" />
+      </svg>
+    );
+  }
+
+  if (name === 'office') {
+    return (
+      <svg {...common}>
+        <path d="M5 6h14v9H5z" />
+        <path d="M9 19h6" />
+        <path d="M12 15v4" />
+        <path d="M8 9.5h3" />
+        <path d="M8 12h5" />
+      </svg>
+    );
+  }
+
+  if (name === 'gourmet') {
+    return (
+      <svg {...common}>
+        <path d="M7 4v16" />
+        <path d="M4.5 4v5.2A2.5 2.5 0 0 0 7 11.7a2.5 2.5 0 0 0 2.5-2.5V4" />
+        <path d="M15.5 4v16" />
+        <path d="M15.5 4c2.2.6 3.5 2.4 3.5 5.4 0 2.2-1.2 3.8-3.5 4.3" />
+      </svg>
+    );
+  }
+
+  if (name === 'leisure') {
+    return (
+      <svg {...common}>
+        <path d="M5 11.5 12 5l7 6.5" />
+        <path d="M7 10.5V19h10v-8.5" />
+        <path d="M9.5 19v-4.25h5V19" />
+        <path d="M10 9.5h4" />
+      </svg>
+    );
+  }
+
   return (
     <svg {...common}>
       <path d="M12 21s7-5.45 7-11.4A7 7 0 0 0 5 9.6C5 15.55 12 21 12 21Z" />
@@ -91,8 +149,39 @@ function FeaturePill({ icon, label }: { icon: FeatureIconName; label: string }) 
   );
 }
 
+function normalizeFeatureItems(items?: string[] | string | null) {
+  if (Array.isArray(items)) return items;
+  if (typeof items !== 'string') return [];
+  try {
+    const parsed = JSON.parse(items);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return items.split(',').map((item) => item.trim()).filter(Boolean);
+  }
+}
+
+function getAmenityHighlights(items?: string[] | string | null) {
+  const all = normalizeFeatureItems(items).filter(Boolean);
+  const pick = (label: string, icon: FeatureIconName, terms: string[]) => {
+    const found = all.find((item) => {
+      const normalized = item.toLowerCase();
+      return terms.some((term) => normalized.includes(term));
+    });
+    return found ? { label, icon, detail: found } : null;
+  };
+
+  return [
+    pick('Piscina', 'pool', ['piscina', 'prainha']),
+    pick('Academia', 'gym', ['academia', 'fitness']),
+    pick('Home office', 'office', ['home office', 'office', 'cowork', 'coworking']),
+    pick('Área gourmet', 'gourmet', ['gourmet', 'churrasqueira', 'bar']),
+    pick('Lazer completo', 'leisure', ['lazer', 'salão', 'sala de jogos', 'brinquedoteca', 'quadra', 'pet play', 'lounge']),
+  ].filter(Boolean).slice(0, 4) as Array<{ label: string; icon: FeatureIconName; detail: string }>;
+}
+
 export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
   const [loading, setLoading] = useState(false);
+  const amenityHighlights = getAmenityHighlights(imovel.caracteristicas);
 
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-gray-200" id={`imovel-${imovel.id}`}>
@@ -200,6 +289,21 @@ export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
             <FeaturePill icon="area" label={`${imovel.area_total} m²`} />
           )}
         </div>
+
+        {amenityHighlights.length > 0 && (
+          <div className="mb-6 flex flex-wrap gap-2">
+            {amenityHighlights.map((item) => (
+              <span
+                key={`${item.label}-${item.detail}`}
+                title={item.detail}
+                className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm"
+              >
+                <FeatureIcon name={item.icon} className="h-3.5 w-3.5 text-blue-700" />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Location */}
         <div className="flex items-start gap-3 mb-6 rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3.5">

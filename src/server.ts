@@ -97,6 +97,23 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/api/assets/r2/*', async (req, res) => {
+    try {
+        const key = String(req.params[0] || '').replace(/^\/+/, '');
+        if (!key || key.includes('..')) {
+            return res.status(400).json({ success: false, error: 'Invalid asset path' });
+        }
+
+        const asset = await r2StorageService.getObjectBuffer(key);
+        res.setHeader('Content-Type', asset.contentType);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.send(asset.buffer);
+    } catch (error: any) {
+        console.error('[R2AssetProxy] Error:', error.message);
+        res.status(404).json({ success: false, error: 'Asset not found' });
+    }
+});
+
 app.use('/api', sessionGuard);
 
 // ========== MASTER ACCESS INJECTOR ==========

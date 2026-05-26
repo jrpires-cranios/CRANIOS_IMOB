@@ -157,6 +157,24 @@ export class R2StorageService {
         }
     }
 
+    async getObjectBuffer(path: string, bucketOverride?: string): Promise<{ buffer: Buffer; contentType: string }> {
+        const command = new GetObjectCommand({
+            Bucket: bucketOverride || this.bucketName,
+            Key: path
+        });
+
+        const response = await this.client.send(command);
+        const body: any = response.Body;
+        const bytes = body?.transformToByteArray
+            ? await body.transformToByteArray()
+            : Buffer.from(await body.arrayBuffer());
+
+        return {
+            buffer: Buffer.from(bytes),
+            contentType: response.ContentType || 'application/octet-stream'
+        };
+    }
+
     /**
      * Determinar Content-Type pelo nome do arquivo
      */
