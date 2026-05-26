@@ -6,6 +6,91 @@ interface PropertyCardProps {
   onClick?: () => void;
 }
 
+type FeatureIconName = 'bed' | 'bath' | 'parking' | 'area' | 'location';
+
+function FeatureIcon({ name, className = 'w-5 h-5' }: { name: FeatureIconName; className?: string }) {
+  const common = {
+    fill: 'none',
+    viewBox: '0 0 24 24',
+    stroke: 'currentColor',
+    strokeWidth: 1.7,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    className,
+  };
+
+  if (name === 'bed') {
+    return (
+      <svg {...common}>
+        <path d="M4 11.25V7.8A2.8 2.8 0 0 1 6.8 5h3.05a2.15 2.15 0 0 1 2.15 2.15v4.1" />
+        <path d="M12 11.25h8.25A1.75 1.75 0 0 1 22 13v5.25" />
+        <path d="M2 18.25V9.75" />
+        <path d="M2 15.25h20" />
+        <path d="M5 18.25v-3" />
+        <path d="M19 18.25v-3" />
+        <path d="M6.7 8.15h2.4" />
+      </svg>
+    );
+  }
+
+  if (name === 'bath') {
+    return (
+      <svg {...common}>
+        <path d="M5 11.25h15.25v1.9A5.85 5.85 0 0 1 14.4 19H9.85A5.85 5.85 0 0 1 4 13.15v-1.9h1Z" />
+        <path d="M7 11.25V6.9A2.9 2.9 0 0 1 9.9 4h.35A2.75 2.75 0 0 1 13 6.75" />
+        <path d="M12.25 7.1h3.1" />
+        <path d="M8 19l-.8 2" />
+        <path d="M16 19l.8 2" />
+      </svg>
+    );
+  }
+
+  if (name === 'parking') {
+    return (
+      <svg {...common}>
+        <path d="M5 19V8.2A3.2 3.2 0 0 1 8.2 5h5.05a4.15 4.15 0 0 1 0 8.3H9.2" />
+        <path d="M9.2 19V5" />
+        <path d="M9.2 9.15h3.7a1.05 1.05 0 1 1 0 2.1H9.2" />
+      </svg>
+    );
+  }
+
+  if (name === 'area') {
+    return (
+      <svg {...common}>
+        <path d="M5 5h14v14H5z" />
+        <path d="M8 16.5h3.75" />
+        <path d="M8 13.5h2.25" />
+        <path d="M14 8h2" />
+        <path d="M16 8v2" />
+        <path d="M5 9h14" />
+        <path d="M9 5v14" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M12 21s7-5.45 7-11.4A7 7 0 0 0 5 9.6C5 15.55 12 21 12 21Z" />
+      <path d="M9.4 9.55h5.2l1.05 4.15H8.35l1.05-4.15Z" />
+      <path d="M9.65 13.7v1.45" />
+      <path d="M14.35 13.7v1.45" />
+      <path d="M10.25 8.25h3.5" />
+    </svg>
+  );
+}
+
+function FeaturePill({ icon, label }: { icon: FeatureIconName; label: string }) {
+  return (
+    <div className="group flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 px-3.5 py-3 text-slate-700 transition duration-200 hover:border-blue-100 hover:bg-blue-50/60">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-700 shadow-sm ring-1 ring-slate-100 transition group-hover:text-blue-700 group-hover:ring-blue-100">
+        <FeatureIcon name={icon} className="h-4.5 w-4.5" />
+      </span>
+      <span className="text-sm font-medium leading-none tracking-normal">{label}</span>
+    </div>
+  );
+}
+
 export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
   const [loading, setLoading] = useState(false);
 
@@ -103,44 +188,24 @@ export default function PropertyCard({ imovel, onClick }: PropertyCardProps) {
         {/* Features */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {imovel.quartos !== undefined && (
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 3 3 7 7v14l-7-7-3-3-7-7z" />
-              </svg>
-              <span className="text-sm text-gray-700">{imovel.quartos} quartos</span>
-            </div>
+            <FeaturePill icon="bed" label={`${imovel.quartos} quartos`} />
           )}
           {imovel.banheiros !== undefined && (
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 3h4.674M12 3h4.674m-9.337 5.5a7 7 0 11-14 0 7-7 0 00-11.314 0m-4.242 4.243a8.828 8.828 0 000 0 0 0 0 0-2.5 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 6.364 6.364 0 0 0 0 0 0 1.414 1.414 0 0 0 0 0 0-4.242 0 0-4.242 0 0 0 0 0 0 0 6.364-1.414 1.414z" />
-              </svg>
-              <span className="text-sm text-gray-700">{imovel.banheiros} banheiros</span>
-            </div>
+            <FeaturePill icon="bath" label={`${imovel.banheiros} banheiros`} />
           )}
           {imovel.vagas_garagem !== undefined && imovel.vagas_garagem > 0 && (
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-7m0 0l-7 7m7-7v-12" />
-              </svg>
-              <span className="text-sm text-gray-700">{imovel.vagas_garagem} vagas</span>
-            </div>
+            <FeaturePill icon="parking" label={`${imovel.vagas_garagem} vagas`} />
           )}
           {imovel.area_total !== undefined && (
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8a4 4 0 014 0 1-8 0 1 8 0 4z" />
-              </svg>
-              <span className="text-sm text-gray-700">{imovel.area_total} m²</span>
-            </div>
+            <FeaturePill icon="area" label={`${imovel.area_total} m²`} />
           )}
         </div>
 
         {/* Location */}
-        <div className="flex items-start gap-3 mb-6 bg-blue-50 rounded-lg px-4 py-3">
-          <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 00-2.827 0l-4.244-4.243a8 8 0 00-11.314 0z" />
-          </svg>
+        <div className="flex items-start gap-3 mb-6 rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3.5">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700 shadow-sm ring-1 ring-blue-100">
+            <FeatureIcon name="location" className="h-5 w-5" />
+          </span>
           <div className="flex-1 min-w-0">
             <p className="text-sm text-gray-700 font-medium line-clamp-1">
               {imovel.endereco}
